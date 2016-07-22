@@ -23,7 +23,7 @@ class TitleScene: SKScene {
         
         /*Update time*/
        spawnTimer += fixedDelta
-        if spawnTimer >= 0.3{
+        if spawnTimer >= 1.0{
             
             //grab reference to SpiteKit view
             let skView = self.view as SKView!
