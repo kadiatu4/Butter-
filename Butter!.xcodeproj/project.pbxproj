@@ -31,6 +31,8 @@
 		2C299DA31D367A20000D3409 /* Butter_UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C299DA21D367A20000D3409 /* Butter_UITests.swift */; };
 		2C299DB31D367D42000D3409 /* Pancake.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2C299DB21D367D42000D3409 /* Pancake.sks */; };
 		2C299DB51D367E47000D3409 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2C299DB41D367E47000D3409 /* GameScene.sks */; };
+		2C54CA7A1D42976A00B641EE /* TitlePage.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2C54CA791D42976A00B641EE /* TitlePage.sks */; };
+		2C54CA7C1D429BE600B641EE /* TitlePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C54CA7B1D429BE600B641EE /* TitlePage.swift */; };
 		2CAD41C41D39270D00BC6222 /* AnimationActions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CAD41C31D39270D00BC6222 /* AnimationActions.sks */; };
 /* End PBXBuildFile section */
 
@@ -82,6 +84,8 @@
 		2C299DA41D367A20000D3409 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2C299DB21D367D42000D3409 /* Pancake.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Pancake.sks; sourceTree = "<group>"; };
 		2C299DB41D367E47000D3409 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
+		2C54CA791D42976A00B641EE /* TitlePage.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TitlePage.sks; sourceTree = "<group>"; };
+		2C54CA7B1D429BE600B641EE /* TitlePage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitlePage.swift; sourceTree = "<group>"; };
 		2CAD41C31D39270D00BC6222 /* AnimationActions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = AnimationActions.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -165,8 +169,10 @@
 			isa = PBXGroup;
 			children = (
 				2C299D7E1D367A20000D3409 /* AppDelegate.swift */,
-				2C299DB41D367E47000D3409 /* GameScene.sks */,
 				2C299D821D367A20000D3409 /* GameScene.swift */,
+				2C299DB41D367E47000D3409 /* GameScene.sks */,
+				2C54CA791D42976A00B641EE /* TitlePage.sks */,
+				2C54CA7B1D429BE600B641EE /* TitlePage.swift */,
 				2C299D841D367A20000D3409 /* GameViewController.swift */,
 				2C299D861D367A20000D3409 /* Main.storyboard */,
 				2C299D891D367A20000D3409 /* Assets.xcassets */,
@@ -263,6 +269,7 @@
 				TargetAttributes = {
 					2C299D7A1D367A20000D3409 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = V9RS93X744;
 					};
 					2C299D921D367A20000D3409 = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -302,6 +309,7 @@
 				2CAD41C41D39270D00BC6222 /* AnimationActions.sks in Resources */,
 				2C299D8D1D367A20000D3409 /* LaunchScreen.storyboard in Resources */,
 				2C299D8A1D367A20000D3409 /* Assets.xcassets in Resources */,
+				2C54CA7A1D42976A00B641EE /* TitlePage.sks in Resources */,
 				2C299D881D367A20000D3409 /* Main.storyboard in Resources */,
 				2C299DB51D367E47000D3409 /* GameScene.sks in Resources */,
 				2C299DB31D367D42000D3409 /* Pancake.sks in Resources */,
@@ -335,6 +343,7 @@
 				2C299D831D367A20000D3409 /* GameScene.swift in Sources */,
 				2C21546E1D38240E00FEC7D8 /* SKNode+Extensions.swift in Sources */,
 				2C299D851D367A20000D3409 /* GameViewController.swift in Sources */,
+				2C54CA7C1D429BE600B641EE /* TitlePage.swift in Sources */,
 				2C2154711D38240E00FEC7D8 /* SKTTimingFunctions.swift in Sources */,
 				2C21546C1D38240E00FEC7D8 /* SKAction+SpecialEffects.swift in Sources */,
 				2C21546A1D38240E00FEC7D8 /* Int+Extensions.swift in Sources */,
@@ -489,10 +498,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "Butter!/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Kadi.Butter-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -500,10 +512,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "Butter!/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Kadi.Butter-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
