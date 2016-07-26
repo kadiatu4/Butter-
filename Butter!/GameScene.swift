@@ -30,6 +30,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //Stores Number of Pancakes
     var pancakes: [MSReferenceNode] = []
     var spawnTimer: CFTimeInterval = 0
+    var sinceTouch: CFTimeInterval = 0
     
     //Scrolls Background
     var scrollLayer: SKNode!
@@ -61,7 +62,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func didMoveToView(view: SKView) {
         
         //Reference for Counter Top
-        print(self.children)
         counterTop = self.childNodeWithName("//counterTop") as! SKSpriteNode
         
         //Reference for Left and Right Nodes
@@ -85,9 +85,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addYPosition += 20
         var newYPosition = startPosition + addYPosition
         
-
-        //Position Pancakes
-        Pancake.avatar.position = CGPoint(x:151 , y: newYPosition)
+        
+//        //Position Pancakes
+//        Pancake.avatar.position = CGPoint(x: 151, y: newYPosition)
         
         //Move Pancake
         movePancake(Pancake)
@@ -114,34 +114,62 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //Creates new Pancakes
         let Pancake = MSReferenceNode(URL: NSURL (fileURLWithPath: resourcePath!))
-       
+     
         //Add Pancakes in Array
         pancakeTower.append(Pancake)
         
         //Stores Current Pancake
         let currentPancake = pancakeTower[currCount]
-
-        //Add Pancakes
-        addChild(Pancake)
-        
-        //Stack Pancakes on top of each other
-        let startPosition = 120
-        addYPosition += 20
-        var newYPosition = startPosition + addYPosition
-        
-        //Position Pancakes
-        Pancake.avatar.position = CGPoint(x:151 , y: newYPosition)
-        
-        //Pancakes Zposition
-        Pancake.zPosition += 5
+        print(sinceTouch)
         
         //Moves Pancakes
         movePancake(Pancake)
         
+        if sinceTouch > 0.4 {
+
+            //Add Pancakes
+            addChild(Pancake)
+            
+            //Stack Pancakes on top of each other
+            let startPosition = 120
+            addYPosition += 20
+            var newYPosition = startPosition + addYPosition
+            
+            
+//            //Positions Pancakes when dropped
+//            Pancake.avatar.position = CGPoint(x:151, y: newYPosition)
+            
+            //Pancakes Zposition
+            Pancake.zPosition += 5
+        }
+        
+//        while sinceTouch <= 1.0{
+//
+//             print("Inside while loop, sinceTouch = \(sinceTouch)")
+//            if sinceTouch > 1.0 {
+//                
+//                //Add Pancakes
+//                addChild(Pancake)
+//                
+//                //Stack Pancakes on top of each other
+//                let startPosition = 120
+//                addYPosition += 20
+//                var newYPosition = startPosition + addYPosition
+//                
+//                
+//                //Positions Pancakes when dropped
+//                Pancake.avatar.position = CGPoint(x:151, y: newYPosition)
+//                
+//                //Pancakes Zposition
+//                Pancake.zPosition += 5
+//            }
+//        }
+     
+        
+      
+        
         //Drop Animation
         FlipPancakes(Pancake)
-        
-       //Pancake.physicsBody?.affectedByGravity = true
         
         //Checks to see if it is a new pancake
         if currentPancake != previousPancake{
@@ -158,27 +186,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //Add Pancake to Pancakes Array
         pancakes.append(Pancake)
         
+        //Reset Since Touch
+        sinceTouch = 0
+        
         //Score
         points = pancakes.count
 
     }
     
     override func update(currentTime: CFTimeInterval) {
-        /* Disable touch if game state is not active */
-        //if gameState != .Active {return}
-        
-        /* Ensure only called while game running */
-      //  if gameState == .GameOver{  gameOver() }
-        
-       // if gameState == .GameOver{return}
+   
         //Stores the previous Pancake
-        var previousPancake = pancakeTower[prevCount]
+        let previousPancake = pancakeTower[prevCount]
 
         //Scroll Background
         if pancakeTower.count >= 10{
             scrollBackground()
         }
         
+        /*Update time since Pancake was dropped*/
+        sinceTouch += fixedDelta
+
         /* Check we have a valid camera target to follow */
         if let cameraTarget = cameraTarget {
             
@@ -190,17 +218,45 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
        
     }
-        
+
     func movePancake(Pancake: MSReferenceNode ){
         //Set values for where the pancake should reach on the screen
-        let moveLeft = SKAction.moveToX(-150, duration: 1)
-        let moveRight = SKAction.moveToX(150, duration: 1)
+        let moveLeft = SKAction.moveToX(-20, duration: 1)
+        let moveRight = SKAction.moveToX(180, duration: 1)
+        let appearLeft = SKAction.moveToX(-120, duration: 0.5)
+        let appearRight = SKAction.moveToX(250, duration: 0.5)
         
-        //Joins the moveLeft and moveRight and loops forever
-        let moveBackAndForth = SKAction.repeatActionForever(SKAction.sequence([moveRight, moveLeft]))
-        
-        //Adds the action to the Pancakes
-        Pancake.runAction(moveBackAndForth, withKey: "movingPancake")
+        //First Pancake Appears  From Right
+        if pancakeTower.count == 1 {
+            //Enter Pancake From the Right Side (OFF-SCREEN)
+            Pancake.runAction(appearRight)
+            //Joins the moveLeft and moveRight and loops forever
+            let moveBackAndForth = SKAction.repeatActionForever(SKAction.sequence([moveLeft, moveRight]))
+            //Adds the action to the Pancakes
+            Pancake.runAction(moveBackAndForth, withKey: "movingPancake")
+        }
+
+        //Pancakes Appear from Left
+        else if pancakeTower.count % 2 == 0 {
+            Pancake.avatar.position.x = -120
+            //Enter Pancake From the Left Side (OFF-SCREEN)
+            Pancake.runAction(appearRight)
+            //Joins the moveLeft and moveRight and loops forever
+            let moveBackAndForth = SKAction.repeatActionForever(SKAction.sequence([moveRight, moveLeft]))
+            //Adds the action to the Pancakes
+            Pancake.runAction(moveBackAndForth, withKey: "movingPancake")
+        }
+            //Pancakes Appear from Right
+        else {
+            
+            Pancake.avatar.position.x = 250
+            //Enter Pancake From the Right Side (OFF-SCREEN)
+            Pancake.runAction(appearLeft)
+            //Joins the moveLeft and moveRight and loops forever
+            let moveBackAndForth = SKAction.repeatActionForever(SKAction.sequence([moveLeft, moveRight]))
+            //Adds the action to the Pancakes
+            Pancake.runAction(moveBackAndForth, withKey: "movingPancake")
+        }
     }
     
     func dropPancakes(Pancake: MSReferenceNode){
