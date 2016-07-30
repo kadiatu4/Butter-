@@ -29,8 +29,7 @@ class TitleScene: SKScene {
             let skView = self.view as SKView!
             //Load Game scene
             let scene = MainMenu(fileNamed: "MainMenu") as MainMenu!
-            
-//            let scene = GameScene(fileNamed: "GameScene") as GameScene! 
+        
             //Ensure correct aspect mode
             scene.scaleMode = .AspectFill
             

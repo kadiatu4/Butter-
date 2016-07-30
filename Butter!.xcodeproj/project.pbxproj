@@ -38,6 +38,8 @@
 		2CAD41C41D39270D00BC6222 /* AnimationActions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CAD41C31D39270D00BC6222 /* AnimationActions.sks */; };
 		2CBDF30A1D444A05004E3B3F /* MainMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CBDF3091D444A05004E3B3F /* MainMenu.sks */; };
 		2CBDF30C1D444CEA004E3B3F /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBDF30B1D444CEA004E3B3F /* MainMenu.swift */; };
+		2CE19BDC1D4BE27400B28368 /* Fork.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CE19BDB1D4BE27400B28368 /* Fork.sks */; };
+		2CE19BDE1D4BE28D00B28368 /* Knife.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CE19BDD1D4BE28D00B28368 /* Knife.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,6 +97,8 @@
 		2CAD41C31D39270D00BC6222 /* AnimationActions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = AnimationActions.sks; sourceTree = "<group>"; };
 		2CBDF3091D444A05004E3B3F /* MainMenu.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = MainMenu.sks; path = ../MainMenu.sks; sourceTree = "<group>"; };
 		2CBDF30B1D444CEA004E3B3F /* MainMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
+		2CE19BDB1D4BE27400B28368 /* Fork.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = Fork.sks; path = "Butter!/Fork.sks"; sourceTree = "<group>"; };
+		2CE19BDD1D4BE28D00B28368 /* Knife.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Knife.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +158,8 @@
 			isa = PBXGroup;
 			children = (
 				2C299DB21D367D42000D3409 /* Pancake.sks */,
+				2CE19BDB1D4BE27400B28368 /* Fork.sks */,
+				2CE19BDD1D4BE28D00B28368 /* Knife.sks */,
 				2CAD41C31D39270D00BC6222 /* AnimationActions.sks */,
 				2C299D7D1D367A20000D3409 /* Butter! */,
 				2C299D961D367A20000D3409 /* Butter!Tests */,
@@ -319,8 +325,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				2CAD41C41D39270D00BC6222 /* AnimationActions.sks in Resources */,
+				2CE19BDE1D4BE28D00B28368 /* Knife.sks in Resources */,
 				2C299D8D1D367A20000D3409 /* LaunchScreen.storyboard in Resources */,
 				2C54CA7A1D42976A00B641EE /* TitlePage.sks in Resources */,
+				2CE19BDC1D4BE27400B28368 /* Fork.sks in Resources */,
 				2C299D881D367A20000D3409 /* Main.storyboard in Resources */,
 				2CBDF30A1D444A05004E3B3F /* MainMenu.sks in Resources */,
 				2C299DB51D367E47000D3409 /* GameScene.sks in Resources */,

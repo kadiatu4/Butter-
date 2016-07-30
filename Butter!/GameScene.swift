@@ -17,15 +17,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var gameState: GameState = .Menu
     
     /* UI Objects */
+    var fork: SKReferenceNode!
     var counterTop: SKSpriteNode!
     var left, right: SKNode!
-    var pancakeLeft, pancakeRight: SKNode!
-    
-    //Stores the location of the edges of the Screen
-    var edgeLeft, edgeRight: CGFloat!
-    
-    //Stores the location of the edges of the Pancake
-    var pancakeEdgeLeft, pancakeEdgeRight: CGFloat!
     
     //Stores Number of Pancake stacked
     var pancakeTower: [MSReferenceNode] = []
@@ -39,7 +33,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //Scrolls Background
     var scrollLayer: SKNode!
     let scrollSpeed: CGFloat = 20
-    
+
     /* Camera */
     var cameraTarget: SKNode?
     
@@ -72,17 +66,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         left = self.childNodeWithName("left")
         right = self.childNodeWithName("right")
         
-        
-        //Reference for Left and Right Nodes of Pancake
-//        pancakeLeft = self.childNodeWithName("//pancakeLeft")
-//        pancakeRight = self.childNodeWithName("//pancakeRight")
-        
         //Reference for Scroll Layer
         scrollLayer = self.childNodeWithName("scrollLayer")
         
         //Reference for Score Label
         scoreLabel = childNodeWithName("//scoreLabel") as! SKLabelNode
-    
+        
+        //Reference for Fork
+        fork = childNodeWithName("//fork") as! SKReferenceNode
+        
         //Creates Pancake
         let Pancake = MSReferenceNode(URL: NSURL (fileURLWithPath: resourcePath!))
         
@@ -96,12 +88,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         appearPancake(Pancake)
         
         //Stack Pancakes on top of each other
-        let startPosition = 120
+        let startPosition = 180
         addYPosition += 20
         var newYPosition = startPosition + addYPosition
         
         //Position Pancake
-        Pancake.avatar.position = CGPoint(x: -120 , y: newYPosition)
+        Pancake.position = CGPoint(x: -120 , y: newYPosition)
         
         /* Set physics contact delegate */
         physicsWorld.contactDelegate = self
@@ -112,6 +104,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
        
+        if startTouch < 0.4 { return }
+        
         //Stores the previous Pancake
         let previousPancake = pancakeTower[prevCount]
         
@@ -139,7 +133,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             addChild(Pancake)
             
             //Stack Pancakes on top of each other
-            let startPosition = 120
+            let startPosition = 200
             addYPosition += 20
             var newYPosition = startPosition + addYPosition
             
@@ -148,11 +142,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             if pancakeTower.count % 2 == 0 {
                 //Right Side
-                Pancake.avatar.position = CGPoint(x: 390 , y: newYPosition)
+                Pancake.position = CGPoint(x: 390 , y: newYPosition)
             }
             else {
                 //Left Side
-                Pancake.avatar.position = CGPoint(x: -120 , y: newYPosition)
+                Pancake.position = CGPoint(x: -120 , y: newYPosition)
 
             }
             //Pancakes Zposition
@@ -167,10 +161,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         //Drop Animation
-        //FlipPancakes(Pancake)
+        FlipPancakes()
         
         /* Set camera to follow pancake */
-        cameraTarget = currentPancake.avatar
+        cameraTarget = currentPancake
         
         //Increment the index of the Pancakes
          prevCount += 1
@@ -188,121 +182,69 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func update(currentTime: CFTimeInterval) {
-   
+      
         //Stores the previous Pancake
         let previousPancake = pancakeTower[prevCount]
-
+        
         //Scroll Background
         if pancakeTower.count >= 10{
             scrollBackground()
         }
-    
+               
         /*Update time since Pancake was dropped*/
         sinceTouch += fixedDelta
         
         //update when Touch begins
         startTouch += fixedDelta
         
-        print(startTouch)
-
         /* Check we have a valid camera target to follow */
         if let cameraTarget = cameraTarget {
             
             /* Set camera position to follow target vertically, keep horizontal locked */
             camera?.position = CGPoint(x:camera!.position.x, y:cameraTarget.position.y)
-            
+        
             /* Clamp camera scrolling to our visible scene area only */
-            camera?.position.y.clamp(283, previousPancake.avatar.position.y)
+            camera?.position.y.clamp(283, previousPancake.position.y)
             }
     }
     
     func appearPancake(Pancake: MSReferenceNode){
     
         //Set values for where the pancake should reach on the screen
-        let moveFromLeft = SKAction.moveToX(-350, duration: 0.5)
-        let moveFromRight = SKAction.moveToX(390, duration: 0.5)
+        let moveFromLeft = SKAction.moveToX(-15, duration: 0.5)
+        let moveFromRight = SKAction.moveToX(320, duration: 0.5)
         
         //Pancakes Appear from Right
-        if pancakeTower.count == 1 {
-            
-            //Disables Touch until Pancake Enters
-            self.userInteractionEnabled = false
-            
-            //Adds the action to the Pancakes
-            Pancake.runAction(moveFromRight)
-            
-            //Move Pancake
-            movePancake(Pancake)
-           
-        }
         if pancakeTower.count % 2 == 0 {
-            
-            //Disables Touch until Pancake Enters
-            self.userInteractionEnabled = false
             
             //Adds the action to the Pancakes
             Pancake.runAction(moveFromLeft)
-            
-            //Move Pancake
-            movePancake(Pancake)
-            
         }
-            //Pancakes Appear from Left
+        //Pancakes Appear from Left
         else {
-            //Disables Touch until Pancake Enters
-            self.userInteractionEnabled = false
             
             //Adds the action to the Pancakes
             Pancake.runAction(moveFromRight)
-            
-            //Move Pancake
-            movePancake(Pancake)
-            
         }
-    
+        
+            //Move Pancake
+           movePancake(Pancake)
     }
     
     func movePancake(Pancake: MSReferenceNode ){
        
-        //Starts the first Pancake from the Left
-        if pancakeTower.count == 1{
-            
-            //Set values for where the pancake should reach on the screen
-            let moveLeft = SKAction.moveToX(195, duration: 1)
-            let moveRight = SKAction.moveToX(420, duration: 1)
-            
-            //Loops Pancake Movement until touch begins
-            let moveBackAndForth = SKAction.repeatActionForever(SKAction.sequence([moveRight, moveLeft]))
-            
-            //Adds the action to the Pancakes
-            Pancake.runAction(moveBackAndForth, withKey: "movingPancake")
-            
-            //Allows Touch after 4 seconds
-            if startTouch <= 0.4 {
-             self.userInteractionEnabled = true
-                
-            }
-           
-
-        }
-        
         //Pancake from the Right
         if pancakeTower.count % 2 == 0 {
             
             //Set values for where the pancake should reach on the screen
-            let moveLeft = SKAction.moveToX(-350, duration: 1)
-            let moveRight = SKAction.moveToX(-50, duration: 1)
+            let moveLeft = SKAction.moveToX(-50, duration: 1)
+            let moveRight = SKAction.moveToX(380, duration: 1)
             
             //Loops Pancake Movement until touch begins
             let moveBackAndForth = SKAction.repeatActionForever(SKAction.sequence([moveLeft, moveRight]))
             
             //Adds the action to the Pancakes
             Pancake.runAction(moveBackAndForth, withKey: "movingPancake")
-            
-            //Allows Touch after 4 seconds
-            if startTouch <= 0.4 {
-                self.userInteractionEnabled = true
-            }
 
             
         }
@@ -311,19 +253,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         else {
             
             //Set values for where the pancake should reach on the screen
-            let moveLeft = SKAction.moveToX(195, duration: 1)
-            let moveRight = SKAction.moveToX(420, duration: 1)
+            let moveLeft = SKAction.moveToX(-50, duration: 1)
+            let moveRight = SKAction.moveToX(380, duration: 1)
             
             //Loops Pancake Movement until touch begins
             let moveBackAndForth = SKAction.repeatActionForever(SKAction.sequence([moveRight, moveLeft]))
             
             //Adds the action to the Pancakes
             Pancake.runAction(moveBackAndForth, withKey: "movingPancake")
-            
-            //Allows Touch after 4 seconds
-            if startTouch <= 0.4 {
-                self.userInteractionEnabled = true
-            }
 
         }
     }
@@ -334,32 +271,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             SKAction.moveBy(CGVector(dx: 0, dy: -50), duration: 0.10)]))
         }
     
-    func FlipPancakes(Pancake: MSReferenceNode){
+    func FlipPancakes(){
+        //Stores the location of the edges of the Screen
+        var location: CGPoint!
+        var edgeLeft, edgeRight: CGFloat!
+
         //Stores the previous Pancake
         var previousPancake = pancakeTower[prevCount]
         
-        //Stores the current Pancake 
-        var currentPancake = pancakeTower[currCount]
-        
         //Converts the Points of the Pancake's Position
-       // location = previousPancake.convertPoint(previousPancake.position, toNode: self)
+        location = previousPancake.position
         
-//        prevPancakelocation = previousPancake.position / 3
-//        currPancakelocation = currentPancake.position / 3
-        //location = previousPancake.position
         //Converts the Point of the Left Node Position of Screen
         edgeLeft = left.position.x
         
         //Converts the Point of the Right Node Position of Screen
         edgeRight = right.position.x
        
-        //Converts the Point of the Right Node Position of Pancake
-        //pancakeEdgeRight = pancakeRight.position.x
-        
-        //Converts the Point of the Left Node Position of Pancake
-       // pancakeEdgeLeft = pancakeLeft.position.x
-        
-        
         //Calls DropLeft Animation
         let DropLeft = SKAction(named: "DropLeft")!
         
@@ -370,23 +298,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let remove = SKAction.removeFromParent()
         
         //Checks where the Pancake has landed
-        if pancakeEdgeRight > edgeRight{
-            print(pancakeEdgeRight)
+        print(location)
+        if location.x > edgeRight{
             print("This is the Right Edge: \(edgeRight)")
             let sequence = SKAction.sequence([DropRight, remove])
             previousPancake.runAction(sequence)
         }
-        else if pancakeEdgeLeft < edgeLeft {
-            print(pancakeEdgeLeft)
+        else if location.x  < edgeLeft {
             print("This is the Left Edge: \(edgeLeft)")
             let sequence = SKAction.sequence([DropLeft, remove])
             previousPancake.runAction(sequence)
        }
-//        else if location.x > edgeLeft && location.x < edgeRight{
-//            removeAllActions()
-//            print("In the center of Counter \(location) ")
-//        }
         gameState = .GameOver
+        
         //gameOver()
 
     }
@@ -410,11 +334,39 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+      func appearFork(){
+        
+        //Stores the previous Pancake
+        let previousPancake = pancakeTower[prevCount]
+        
+        //Gets the previous Pancake
+        let pancakeXposition = previousPancake.position.x
+        
+        //Position Fork off Screen
+        fork.position = CGPoint(x: pancakeXposition, y: 480)
+        
+        let dropFork = SKAction.moveToY(previousPancake.position.y, duration: 2)
+        
+        fork.runAction(dropFork)
+    }
+    
     func gameOver(){
         
         /* Game over! */
         gameState = .GameOver
         
+        //grab reference to SpiteKit view
+        let skView = self.view as SKView!
+        
+        //Load Game scene
+        let scene = GameOverScene(fileNamed: "GameOverScene") as GameOverScene!
+        
+        //Ensure correct aspect mode
+        scene.scaleMode = .AspectFill
+        
+        //Start Game Scene
+        skView.presentScene(scene)
+
         return
     
     }
