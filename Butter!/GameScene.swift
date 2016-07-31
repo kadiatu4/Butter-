@@ -18,6 +18,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     /* UI Objects */
     var fork: SKReferenceNode!
+    var knife: SKReferenceNode!
     var counterTop: SKSpriteNode!
     var left, right: SKNode!
     
@@ -75,6 +76,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //Reference for Fork
         fork = childNodeWithName("//fork") as! SKReferenceNode
         
+        //Reference for Knife
+        knife = childNodeWithName("//knife") as! SKReferenceNode
+
         //Creates Pancake
         let Pancake = MSReferenceNode(URL: NSURL (fileURLWithPath: resourcePath!))
         
@@ -151,7 +155,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             //Pancakes Zposition
             Pancake.zPosition += 5
-        
+
         }
         
        
@@ -160,8 +164,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
           previousPancake.removeActionForKey("movingPancake")
         }
         
-        //Drop Animation
-        FlipPancakes()
+        //Flip Pancakes Animation
+        flipPancakes()
         
         /* Set camera to follow pancake */
         cameraTarget = currentPancake
@@ -190,7 +194,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if pancakeTower.count >= 10{
             scrollBackground()
         }
-               
+        
         /*Update time since Pancake was dropped*/
         sinceTouch += fixedDelta
         
@@ -271,7 +275,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             SKAction.moveBy(CGVector(dx: 0, dy: -50), duration: 0.10)]))
         }
     
-    func FlipPancakes(){
+    func flipPancakes(){
         //Stores the location of the edges of the Screen
         var location: CGPoint!
         var edgeLeft, edgeRight: CGFloat!
@@ -298,20 +302,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let remove = SKAction.removeFromParent()
         
         //Checks where the Pancake has landed
-        print(location)
         if location.x > edgeRight{
-            print("This is the Right Edge: \(edgeRight)")
             let sequence = SKAction.sequence([DropRight, remove])
             previousPancake.runAction(sequence)
         }
         else if location.x  < edgeLeft {
-            print("This is the Left Edge: \(edgeLeft)")
             let sequence = SKAction.sequence([DropLeft, remove])
             previousPancake.runAction(sequence)
        }
         gameState = .GameOver
         
-        //gameOver()
+        gameOver()
 
     }
     
@@ -345,11 +346,43 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //Position Fork off Screen
         fork.position = CGPoint(x: pancakeXposition, y: 480)
         
+        //Drops the Fork down
         let dropFork = SKAction.moveToY(previousPancake.position.y, duration: 2)
         
-        fork.runAction(dropFork)
-    }
+        //Picks up a Pancake
+        let pickUpPancake = SKAction.moveToY(500, duration: 2)
+        
+        //Joins Action
+        let sequence = SKAction.sequence([dropFork, pickUpPancake])
+        
+        //Runs Action
+        fork.runAction(sequence)
+        
+}
     
+    func appearKnife(){
+        //Stores the previous Pancake
+        let previousPancake = pancakeTower[prevCount]
+        
+        //Gets the previous Pancake
+        let pancakeYposition = previousPancake.position.y
+        
+        //Position Knife off Screen
+        knife.position = CGPoint(x: -120, y:pancakeYposition)
+        
+        print(knife.position)
+        //Brings the Knife on Screen
+        let findPancake = SKAction.moveToX(previousPancake.position.x, duration: 2)
+        //Cut 2 Pancakes 
+        let cutPancakes = SKAction.moveBy(CGVector(dx: 0, dy: -100), duration: 0.10)
+        let sequence = SKAction.sequence([findPancake, cutPancakes])
+        
+        knife.runAction(sequence)
+//        Pancake.runAction(SKAction.sequence([
+//            SKAction.moveBy(CGVector(dx: 0, dy: -50), duration: 0.10)]))
+        
+
+    }
     func gameOver(){
         
         /* Game over! */
