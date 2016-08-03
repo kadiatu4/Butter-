@@ -20,6 +20,21 @@ class GameOverScene: SKScene {
   
         
     }
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        
+        //grab reference to SpiteKit view
+        let skView = self.view as SKView!
+        //Load Game scene
+        let scene = GameScene(fileNamed: "GameScene") as GameScene!
+        
+        //Ensure correct aspect mode
+        scene.scaleMode = .AspectFill
+        
+        //Start Game Scene
+        skView.presentScene(scene)
+        
+
+    }
     override func update(currentTime: NSTimeInterval) {
         
         //Update Time 
