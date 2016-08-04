@@ -126,11 +126,9 @@ class GameScene: SKScene {
             
             if touchedNode.name == "touchedFork" {
                 
-                    let moveForkUp = SKAction.moveBy(CGVector(dx: 0 , dy: 400), duration: 1)
-                    let remove = SKAction.removeFromParent()
-                    
-                    let sequence = SKAction.sequence([moveForkUp,remove])
-                    fork.runAction(sequence)
+                    let moveForkUp = SKAction.moveToY(400, duration: 0.5)
+                    fork.runAction(moveForkUp)
+                
                 }
                 if touchedNode.name == "touchedKnife"{
                     
@@ -251,17 +249,6 @@ class GameScene: SKScene {
             /* Clamp camera scrolling to our visible scene area only */
             camera?.position.y.clamp(283, previousPancake.position.y)
         }
-        let pancakeYposition = previousPancake.position.y
-        let ypositionFork = pancakeYposition - 120
-        let startForkPosition = pancakeYposition * 2
-        let distance = startForkPosition - ypositionFork
-        print("fork : \(fork.position.y)")
-        print("start Fork: \(startForkPosition)")
-        print("pancake: \(pancakeYposition)")
-        print("stop Fork: \(ypositionFork)")
-        print("distance: \(distance)")
-        
-
     }
     
     func appearPancake(Pancake: MSReferenceNode){
