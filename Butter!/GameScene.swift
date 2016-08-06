@@ -12,7 +12,7 @@ enum GameState{
     case Menu, Active, GameOver
 }
 
-class GameScene: SKScene {
+class GameScene: SKScene{
     //Game State
     var gameState: GameState = .Menu
     var endGame: Bool = false
@@ -35,8 +35,6 @@ class GameScene: SKScene {
     //Stores different Times
     var spawnTimer: CFTimeInterval = 0
     var sinceTouch: CFTimeInterval = 0
-    var startTouch: CFTimeInterval = 0
-    var startGameOver: CFTimeInterval = 0
     
     //Scrolls Background
     var scrollLayer: SKNode!
@@ -44,6 +42,9 @@ class GameScene: SKScene {
 
     /* Camera */
     var cameraTarget: SKNode?
+    
+    //Camera Position
+    var cameraPosition: SKNode!
     
     //Timer 
     var timer = NSTimer()
@@ -57,7 +58,7 @@ class GameScene: SKScene {
     
     //Stores Previous and Current pancake
      var prevCount = 0
-     var currCount = 1
+     var currCount = 0
     
     //Stores the Score
     var scoreLabel: SKLabelNode!
@@ -65,10 +66,18 @@ class GameScene: SKScene {
         didSet{
         scoreLabel.text = String(points)
         }
-        
     }
-    
+    //Stores the Coins
+    var coinLabel: SKLabelNode!
+    var Coins: Int = 0 {
+        didSet{
+            coinLabel.text = String(Coins)
+        }
+    }
+
+        
     override func didMoveToView(view: SKView) {
+      
         
         //Reference for Counter Top
         counterTop = self.childNodeWithName("counterTop") as! SKSpriteNode
@@ -83,6 +92,9 @@ class GameScene: SKScene {
         //Reference for Score Label
         scoreLabel = childNodeWithName("//scoreLabel") as! SKLabelNode
         
+        //Reference  for Coins Label
+        coinLabel = childNodeWithName("//coinLabel") as! SKLabelNode
+        
         //Reference for Fork
         fork = childNodeWithName("//fork") as! SKReferenceNode
         
@@ -92,6 +104,9 @@ class GameScene: SKScene {
         //Reference for the touched Nodes
         touchedFork = childNodeWithName("//touchedFork") as!  SKSpriteNode
         touchedKnife = childNodeWithName("//touchedKnife") as! SKSpriteNode
+        
+        //Reference for Camera position when game ends
+        cameraPosition = self.childNodeWithName("cameraPosition")
         
         //Creates Pancake
         let Pancake = MSReferenceNode(URL: NSURL (fileURLWithPath: resourcePath!))
@@ -106,25 +121,28 @@ class GameScene: SKScene {
         appearPancake(Pancake)
         
         //Stack Pancakes on top of each other
-        let startPosition = 180
+        let startPosition = 160
         addYPosition += 20
         var newYPosition = startPosition + addYPosition
         
         //Position Pancake
         Pancake.position = CGPoint(x: -120 , y: newYPosition)
-        
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        //Enables touch after 0.4 seconds or if game is active
+        if sinceTouch <= 0.4{ return }
+        if gameState == .GameOver{ return }
         
         //Stores the previous Pancake
         let previousPancake = pancakeTower[prevCount]
         
+        //Stores Current Pancake
+        let currentPancake = pancakeTower[currCount]
+        
+        //Creates new Pancakes
+        let Pancake = MSReferenceNode(URL: NSURL (fileURLWithPath: resourcePath!))
 
-        if startTouch < 0.4 { return }
-        
-        if gameState == .GameOver{ return }
-        
         for touch in touches {
         
             //Grab scene position of touch
@@ -159,56 +177,32 @@ class GameScene: SKScene {
             else {
                 
                 //Drops Previous Pancake
-                dropPancakes(previousPancake)
-                
-//                //Generates random number
-//                let randNum = Int(arc4random_uniform(39) + 1)
-//                print(randNum)
-//                if randNum == 3 || randNum == 7 || randNum == 25 || randNum == 35{
-//
-//                  if endGame == false {
-//                    
-                        //Steals Pancake that has stopped
-                        //actionFork()
-//                    }
-//               }
-//               else if randNum == 4 || randNum == 10 || randNum == 20 || randNum == 30 {
-//
-//                    if endGame == false {
-                        //Cuts Pancakes
-                      actionKnife()
-//                    }
-//                }
-                //Depending on the value a Fork or Knife will appear
-                //getrandomNumber()
-                
+                dropPancakes(currentPancake)
                 
                 //Flip Pancakes Animation
-                flipPancakes()
+                flipPancakes(currentPancake)
                 
-                //Reset Start Touch
-                startTouch = 0
+
+        
+                //Depending on the value a Fork or Knife will appear
+              //  getrandomNumber()
                 
-                //Creates new Pancakes
-                let Pancake = MSReferenceNode(URL: NSURL (fileURLWithPath: resourcePath!))
-                
-                //Add Pancakes in Array
-                pancakeTower.append(Pancake)
-                
-                //Stores Current Pancake
-                let currentPancake = pancakeTower[currCount]
+            
+                if sinceTouch > 0.4 && interference == false && endGame == false{
                     
-                if sinceTouch > 0.4 {
-                    
-                    if interference == false && endGame == false{
+                  
+                  //  if interference == false && endGame == false{
                         //Appear Pancake
                         appearPancake(Pancake)
                         
                         //Add Pancakes
                         addChild(Pancake)
-                    }
+                        
+                        //Add Pancakes in Array
+                        pancakeTower.append(Pancake)
+                //    }
                     //Stack Pancakes on top of each other
-                    let startPosition = 200
+                    let startPosition = 160
                     addYPosition += 20
                     var newYPosition = startPosition + addYPosition
                     
@@ -225,28 +219,35 @@ class GameScene: SKScene {
                     }
                     //Pancakes Zposition
                     Pancake.zPosition += 5
-
+                    
+                }
+               
+                //Checks to see if it is a new pancake
+                if currentPancake == previousPancake || currentPancake != previousPancake{
+                    currentPancake.removeActionForKey("movingPancake")
+                    
                 }
                 
-                //Checks to see if it is a new pancake
-                if currentPancake != previousPancake{
-                    previousPancake.removeActionForKey("movingPancake")
+                if endGame == false &&  interference == false{
+                    //Increment the index of the Pancakes
+                    prevCount = currCount
+                    currCount += 1
                 }
-
+                
                 if endGame == false {
                     /* Set camera to follow pancake */
-                    cameraTarget = currentPancake
-                }
-                else if endGame == true{
                     cameraTarget = previousPancake
                 }
+                else if endGame == true{
+                   
+                    /* Set camera to follow pancake */
+                    cameraTarget = cameraPosition
+                }
                 
-                //Increment the index of the Pancakes
-                prevCount += 1
-                currCount += 1
-                
-                //Add Pancake to Pancakes Array
-                pancakes.append(Pancake)
+                if endGame == false{
+                    //Add Pancake to Pancakes Array
+                    pancakes.append(Pancake)
+                }
                 
                 //Reset Since Touch
                 sinceTouch = 0
@@ -255,25 +256,29 @@ class GameScene: SKScene {
                 points = pancakes.count
                 
             }
+         
         }
     
     }
     
     override func update(currentTime: CFTimeInterval) {
-      
+        //Disable touch if Game is Over
+        if endGame == true || gameState == .GameOver{return}
+        
         //Stores the previous Pancake
         let previousPancake = pancakeTower[prevCount]
+        
+        //Stores the current Pancake
+        let currentPancake = pancakeTower[currCount]
 
+        
         //Scroll Background
-        if pancakeTower.count >= 10{
+        if pancakeTower.count >= 5{
             scrollBackground()
         }
         
         /*Update time since Pancake was dropped*/
         sinceTouch += fixedDelta
-        
-        //update when Touch begins
-        startTouch += fixedDelta
         
         /* Check we have a valid camera target to follow */
         if let cameraTarget = cameraTarget {
@@ -282,13 +287,47 @@ class GameScene: SKScene {
             camera?.position = CGPoint(x:camera!.position.x, y:cameraTarget.position.y)
         
             /* Clamp camera scrolling to our visible scene area only */
-            camera?.position.y.clamp(283, previousPancake.position.y)
+            camera?.position.y.clamp(220, currentPancake.position.y)
         }
-        print("pancake : \(previousPancake.position)")
-        print("fork :\(fork.position)")
-        print("knife :\(knife.position)")
 
-        
+        if fork.position.y == previousPancake.position.y && previousPancake.position.y == fork.position.y{
+            
+            //Actions
+            let moveUp = SKAction.moveToY(previousPancake.position.y * 3, duration: 0.5)
+            
+            //Picks up Fork and Pancake
+            fork.runAction(moveUp)
+//            print(previousPancake.position)
+//            print(prevCount)
+           // stealPancake(previousPancake)
+          
+            //Remove both Fork and Pancake from screen
+//            if fork.position.y == previousPancake.position.y * 3 || previousPancake.position.y == previousPancake.position.y * 3{
+//                
+//                fork.position.x = -211
+//                previousPancake.removeFromParent()
+//                
+//                interference = false
+//            }
+        }
+        if knife.position.y == previousPancake.position.y{
+            
+            //Action
+//            let slicedPancake = SKTexture(imageNamed: "SlicedPancake")
+//            let halfPancake = SKTexture(imageNamed: "cutPancake")
+//            let typeofPancake = [slicedPancake, halfPancake]
+//            
+//            let animatePancake = SKAction.animateWithTextures(typeofPancake, timePerFrame: 1)
+//            
+//            previousPancake.avatar.texture = SKTexture(imageNamed: "cutPancake")
+            //previousPancake.runAction(animatePancake)
+            
+        }
+
+       // print("pancake : \(previousPancake.position)")
+       // print("fork :\(fork.position)")
+     //print("knife :\(knife.position)")
+
     }
     
     func appearPancake(Pancake: MSReferenceNode){
@@ -349,22 +388,38 @@ class GameScene: SKScene {
     }
     
     func dropPancakes(Pancake: MSReferenceNode){
-        //Drops the pancake down by 50
+        //Drops the pancake down by 100
         Pancake.runAction(SKAction.sequence([
             SKAction.moveBy(CGVector(dx: 0, dy: -100), duration: 0.10)]))
     }
     
-    func flipPancakes(){
+    func stealPancake(Pancake: MSReferenceNode){
+    
+        //Move the pancake up by 250
+        Pancake.runAction(SKAction.sequence([
+            SKAction.moveBy(CGVector(dx: 0, dy: 250), duration: 0.10)]))
+    
+    }
+    
+    func delay(delay:Double, closure:()->()) {
+        //Used to delay the Game Over Scene
+        dispatch_after(
+            dispatch_time(
+                DISPATCH_TIME_NOW,
+                Int64(delay * Double(NSEC_PER_SEC))
+            ),
+            dispatch_get_main_queue(), closure)
+        return
+    }
+
+    func flipPancakes(Pancake: MSReferenceNode){
     
         //Stores the location of the edges of the Screen
         var location: CGPoint!
         var edgeLeft, edgeRight: CGFloat!
-
-        //Stores the previous Pancake
-        var previousPancake = pancakeTower[prevCount]
         
         //Converts the Points of the Pancake's Position
-        location = previousPancake.position
+        location =  Pancake.position
         
         //Converts the Point of the Left Node Position of Screen
         edgeLeft = left.position.x
@@ -384,22 +439,22 @@ class GameScene: SKScene {
         //Checks where the Pancake has landed
         if location.x > edgeRight{
             let sequence = SKAction.sequence([DropRight, remove])
-            previousPancake.runAction(sequence)
+           Pancake.runAction(sequence)
             endGame = true
             
         }
         else if location.x  < edgeLeft {
             let sequence = SKAction.sequence([DropLeft, remove])
-            previousPancake.runAction(sequence)
+            Pancake.runAction(sequence)
             endGame = true
         }
         
         //Only executes when endGame == true
         if endGame == true {
-            
-            //Delays the Game Over Scene until after animation
-            delay(1.8){
-                self.gameOver()
+
+        //Delays the Game Over Scene until after animation
+        self.delay(1.8){
+              self.gameOver()
             }
         }
     }
@@ -450,34 +505,16 @@ class GameScene: SKScene {
         let findPancake = SKAction.moveToX(pancakeXposition + 15, duration: 1)
         
         //Drops the Fork down
-        let dropFork = SKAction.moveToY(pancakeYposition + 120, duration: 1)
-
+        let dropFork = SKAction.moveToY(pancakeYposition + 20, duration: 1)
+                //+ 70
         //join action
         let sequence = SKAction.sequence([findPancake, dropFork])
         
         fork.runAction(sequence)
         
-        if fork.position.y == previousPancake.position.y{
-            
-            //Actions
-            let moveUp = SKAction.moveToY(pancakeYposition * 3, duration: 0.5)
-            
-             //Picks up Fork and Pancake
-                fork.runAction(moveUp)
-                previousPancake.runAction(moveUp)
-            
-//            //Remove both Fork and Pancake from screen
-//            if fork.position.y == startForkPosition || previousPancake.position.y == startForkPosition{
-//                fork.removeFromParent()
-//                previousPancake.removeFromParent()
-//            }
-//            
-        }
-        
-         interference = false
+        // interference = false
     }
     
-
     
     func actionKnife(){
         //Prevent a new pancake from appearing
@@ -505,27 +542,19 @@ class GameScene: SKScene {
         //Brings the Knife on Screen and drops it on Pancake
         let findPancake = SKAction.moveToX(pancakeXposition - 180, duration: 1)
         
-        let dropKnife = SKAction.moveToY(pancakeYposition
-            - 70, duration: 1)
+        let dropKnife = SKAction.moveToY(pancakeYposition + 20,
+            duration: 1)
 
         let sequence = SKAction.sequence([findPancake, dropKnife])
         knife.runAction(sequence)
         
-//        interference = false
-    }
+//        previousPancake.avatar.texture = SKTexture(imageNamed: "cutPancake")
     
-    func viewDidLoad() {
-        //Starts timer after every 5 seconds
-        self.timer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "getRandomNumber", userInfo: nil, repeats: true)
-    }
-    
-    func resetTimer() {
-        //Restart the  timer after every 5 seconds
-        self.timer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "getRandomNumber", userInfo: nil, repeats: true)
+     //   interference = false
     }
 
     func getrandomNumber(){
-      //Generates a random value after every 5 seconds  
+        //Generates a random value
         let randomNumber = Int(arc4random_uniform(10) + 1)
         
         //If the number is dividable by 5
@@ -536,6 +565,7 @@ class GameScene: SKScene {
                 //Call the Fork
                 actionFork()
             }
+           
         }
         
         //If the number is dividable by 8
@@ -544,22 +574,11 @@ class GameScene: SKScene {
             //Appear only if game != GameOver
              if endGame == false{
                 //Call the Knife
-                actionKnife()
+               // actionKnife()
             }
         }
-        //Reset the timer
-        timer.invalidate()
-        resetTimer()
     }
     
-    func delay(delay:Double, closure:()->()) {
-        dispatch_after(
-            dispatch_time(
-                DISPATCH_TIME_NOW,
-                Int64(delay * Double(NSEC_PER_SEC))
-            ),
-            dispatch_get_main_queue(), closure)
-    }
 
     func gameOver(){
         

@@ -10,14 +10,33 @@ import SpriteKit
 
 class GameOverScene: SKScene {
     
-    //Time the Intro
-    var spawnTimer: CFTimeInterval = 0
-    let fixedDelta: CFTimeInterval = 1.0/60.0 /* 60 FPS*/
+    //Stores Stores and Bonus Points
+    var highScore: SKLabelNode!
+    var highscoreVal:Int  = 0 {
+        didSet{
+            highScore.text = String(highscoreVal)
+        }
+    }
+    var currentScore: SKLabelNode!
+    var point: Int = 0{
+        didSet{
+            currentScore.text = String(point)
+        }}
+    var currentCoins: SKLabelNode!
+    var bonus: SKLabelNode!
     
-      override func didMoveToView(view: SKView) {
+    override func didMoveToView(view: SKView) {
         //Setup your scene
+       
+        //Reference for highScore
+        var highScore = childNodeWithName("highScore") as! SKLabelNode
         
-  
+        //Reference for current score
+        var currentScore = childNodeWithName("currentScore") as! SKLabelNode
+        
+        //Reference for current coins
+        var currentCoins = childNodeWithName("currentCoins") as! SKLabelNode
+           
         
     }
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -37,9 +56,6 @@ class GameOverScene: SKScene {
     }
     override func update(currentTime: NSTimeInterval) {
         
-        //Update Time 
-        spawnTimer += fixedDelta
-        
-       
+      
     }
 }
