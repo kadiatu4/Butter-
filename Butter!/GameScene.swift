@@ -156,16 +156,17 @@ class GameScene: SKScene{
                 //Position of the pancake
                 let pancakeYposition = previousPancake.position.y
                 
-                //Sets the fork to move off screen
-                let startForkPosition = pancakeYposition * 5
-                
                 //Moves ForK
-                let moveUp = SKAction.moveToY(startForkPosition ,duration: 0.5)
+                let moveUp = SKAction.moveBy(CGVector(dx: 0, dy: 300), duration: 0.5)
+                
+                
                 let moveLeft = SKAction.moveToX(-120, duration: 0.5)
                 
                 let sequence = SKAction.sequence([moveUp,moveLeft])
                 
                 fork.runAction(sequence)
+                
+                
             }
             else if touchedNode.name == "touchedKnife"{
                 
@@ -173,18 +174,21 @@ class GameScene: SKScene{
                 let moveKnife = SKAction.moveToX(-211, duration: 0.5)
                
                 knife.runAction(moveKnife)
+                
+                
             }
             else {
                 
                 //Drops Previous Pancake
                 dropPancakes(currentPancake)
-                
+    
                 //Flip Pancakes Animation
                 flipPancakes(currentPancake)
                 
                 //Depending on the value a Fork or Knife will appear
                 getrandomNumber()
                 
+        
                 if sinceTouch > 0.4 && interference == false && endGame == false{
                     
                    //Appear Pancake
@@ -287,51 +291,21 @@ class GameScene: SKScene{
             camera?.position.y.clamp(220, currentPancake.position.y)
         }
         
+        //Stores the previous Pancake
+        let previousPancake = pancakeTower[prevCount]
         
-               //Only Executes if interference is true
-        if interference == true{
-            var checkPositionY = (currentPancake.position.y + 100) + 100
-            var checkPositionX = (currentPancake.position.x + 18)
-            
-           
-            if fork.position.y == checkPositionY && fork.position.x == checkPositionX{
-                print("hello")
-                //Set Z positon to 3 (So node is not touchable)
-                touchedFork.zPosition = 3
-                
-                
-                //Actions
-                let moveUp = SKAction.moveBy(CGVector(dx: 0, dy:300), duration: 0.5)
-                
-                //Picks up Fork and Pancake
-                fork.runAction(moveUp)
-                stealPancake(currentPancake)
-                points -= 1
-                
-                //Remove both Fork and Pancake from screen
-                //            if fork.position.y == previousPancake.position.y * 3 || previousPancake.position.y == previousPancake.position.y * 3{
-                //
-                //                fork.position.x = -211
-                //                previousPancake.removeFromParent()
-                //
-                //                interference = false
-                //            }
-            }
+        print("Current Pancake : \(currentPancake.position) and index: \(currCount)")
+        
+        print("Prev Pancake : \(previousPancake.position) and index: \(prevCount)")
 
-        //if knife.position.y == previousPancake.position.y{
-                
-                //Action
-        //            let slicedPancake = SKTexture(imageNamed: "SlicedPancake")
-        //            let halfPancake = SKTexture(imageNamed: "cutPancake")
-        //            let typeofPancake = [slicedPancake, halfPancake]
-        //            
-        //            let animatePancake = SKAction.animateWithTextures(typeofPancake, timePerFrame: 1)
-        //            
-        //            previousPancake.avatar.texture = SKTexture(imageNamed: "cutPancake")
-                    //previousPancake.runAction(animatePancake)
-                
-           // }
+        
+        //Only Executes if interference is true
+        if interference == true{
+            
+            //Calls this function
+            interferenceContact()
         }
+        
 
     }
     
@@ -404,6 +378,16 @@ class GameScene: SKScene{
         //Move the pancake up by 250
         Pancake.runAction(SKAction.sequence([
             SKAction.moveBy(CGVector(dx: 0, dy: 300), duration: 0.10)]))
+        
+        //Remove Pancake from parent
+        Pancake.removeFromParent()
+        
+        //Reduces points
+        points -= 1
+        
+        if points == 0 {
+            gameOver()
+        }
     
     }
     
@@ -482,7 +466,84 @@ class GameScene: SKScene{
             }
         }
     }
+    func interferenceContact(){
+        //Stores the current Pancake
+        let currentPancake = pancakeTower[currCount]
+        
+        var checkPositionY = (currentPancake.position.y + 100) + 100 + 0.0
+        var checkPositionX = (currentPancake.position.x + 18)
+        
+        //Check if the fork is in contact with the Pancake
+        if fork.position.y == checkPositionY && fork.position.x == checkPositionX{
+            
+            //Set Z positon to 3 (So node is not touchable)
+            touchedFork.zPosition = 3
+            
+            
+            //Actions
+            let moveUp = SKAction.moveBy(CGVector(dx: 0, dy:300), duration: 0.5)
+            
+            //Picks up Fork and Pancake
+            fork.runAction(moveUp)
+            stealPancake(currentPancake)
+            
+            //Reset fork X-Position
+            fork.position.x = -211
+            
+            //If fork is at -211, Allow new Pancakes
+            if fork.position.x == -211{
     
+                //
+                //                    //Appear Pancake
+                //                    appearPancake(currentPancake)
+                //
+                //                    //Add Pancakes
+                //                    addChild(currentPancake)
+                //
+                //                    //Add Pancakes in Array
+                //                    pancakeTower.append(currentPancake)
+                //
+                //                    //Stack Pancakes on top of each other
+                //                   let startPosition = 160
+                //
+                //                    addYPosition += 20
+                //                    let newYPosition = startPosition + addYPosition
+                //
+                //
+                //                    //Pancakes start off screen
+                //                    if pancakeTower.count % 2 == 0 {
+                //                        //Right Side
+                //                        currentPancake.position = CGPoint(x: 390 , y: newYPosition)
+                //                    }
+                //                    else {
+                //                        //Left Side
+                //                        currentPancake.position = CGPoint(x: -120 , y: newYPosition)
+                //
+                //                    }
+                //                    //Pancakes Zposition
+                //                    currentPancake.zPosition += 5
+                
+            }
+            
+        }
+        
+        //if knife.position.y == previousPancake.position.y{
+        
+        //Action
+        //            let slicedPancake = SKTexture(imageNamed: "SlicedPancake")
+        //            let halfPancake = SKTexture(imageNamed: "cutPancake")
+        //            let typeofPancake = [slicedPancake, halfPancake]
+        //
+        //            let animatePancake = SKAction.animateWithTextures(typeofPancake, timePerFrame: 1)
+        //
+        //            previousPancake.avatar.texture = SKTexture(imageNamed: "cutPancake")
+        //previousPancake.runAction(animatePancake)
+        
+        // }
+        interference = false
+        
+    }
+
     func actionFork(){
         //Prevent a new pancake from appearing
         interference = true
@@ -521,10 +582,6 @@ class GameScene: SKScene{
         let sequence = SKAction.sequence([findPancake, dropFork])
     
         fork.runAction(sequence)
-        
-        
-        
-        // interference = false
     }
     
     
@@ -552,17 +609,18 @@ class GameScene: SKScene{
         knife.position = CGPoint(x: -211, y:pancakeYposition * 2)
         
         //Brings the Knife on Screen and drops it on Pancake
-        let findPancake = SKAction.moveToX(pancakeXposition - 180, duration: 1)
+        let findPancake = SKAction.moveToX(pancakeXposition - 170, duration: 1)
         
-        let dropKnife = SKAction.moveToY(pancakeYposition + 20,
+        let dropKnife = SKAction.moveToY(pancakeYposition - 70,
             duration: 1)
 
         let sequence = SKAction.sequence([findPancake, dropKnife])
         knife.runAction(sequence)
         
 //        previousPancake.avatar.texture = SKTexture(imageNamed: "cutPancake")
+        
+        interference = false
     
-     //   interference = false
     }
 
     func getrandomNumber(){
@@ -574,23 +632,22 @@ class GameScene: SKScene{
             //Appear only if game != GameOver
             if endGame == false{
                 //Call the Fork
-                actionFork()
+                //actionFork()
             }
         }
         
         //If the number is dividable by 8
-        else if randomNumber % 8 == 0{
+        //else if randomNumber % 8 == 0{
             
             //Appear only if game != GameOver
              if endGame == false{
                 //Call the Knife
-              // actionKnife()
+              actionKnife()
             }
-        }
+       // }
     }
     
-
-    func gameOver(){
+       func gameOver(){
         
         /* Game over! */
         gameState = .GameOver
