@@ -290,11 +290,11 @@ class GameScene: SKScene{
         
                //Only Executes if interference is true
         if interference == true{
-            var checkPosition = (currentPancake.position.y + 100) + 100
-            print(fork.position.y)
-            print(checkPosition)
+            var checkPositionY = (currentPancake.position.y + 100) + 100
+            var checkPositionX = (currentPancake.position.x + 18)
+            
            
-            if fork.position.y == checkPosition{
+            if fork.position.y == checkPositionY && fork.position.x == checkPositionX{
                 print("hello")
                 //Set Z positon to 3 (So node is not touchable)
                 touchedFork.zPosition = 3
@@ -306,7 +306,7 @@ class GameScene: SKScene{
                 //Picks up Fork and Pancake
                 fork.runAction(moveUp)
                 stealPancake(currentPancake)
-                //pancakes.removeLast()
+                points -= 1
                 
                 //Remove both Fork and Pancake from screen
                 //            if fork.position.y == previousPancake.position.y * 3 || previousPancake.position.y == previousPancake.position.y * 3{
