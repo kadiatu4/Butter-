@@ -34,8 +34,11 @@
 		2C54CA7C1D429BE600B641EE /* TitlePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C54CA7B1D429BE600B641EE /* TitlePage.swift */; };
 		2C54F07B1D4569A700A645AB /* GameOverScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C54F07A1D4569A700A645AB /* GameOverScene.swift */; };
 		2C54F0811D456A0100A645AB /* GameOverScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2C54F0801D456A0100A645AB /* GameOverScene.sks */; };
+		2C6AB9BA1D590DED0004536C /* DroppedPancake2.caf in Resources */ = {isa = PBXBuildFile; fileRef = 2C6AB9B91D590DED0004536C /* DroppedPancake2.caf */; };
 		2C8F225F1D4453320090B10D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C8F225E1D4453320090B10D /* Assets.xcassets */; };
 		2CAD41C41D39270D00BC6222 /* AnimationActions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CAD41C31D39270D00BC6222 /* AnimationActions.sks */; };
+		2CB66FCD1D58D41A00065E02 /* ForkKnife.caf in Resources */ = {isa = PBXBuildFile; fileRef = 2CB66FCC1D58D41A00065E02 /* ForkKnife.caf */; };
+		2CB66FCF1D58DB1000065E02 /* flyingPancake.caf in Resources */ = {isa = PBXBuildFile; fileRef = 2CB66FCE1D58DB1000065E02 /* flyingPancake.caf */; };
 		2CBDF30A1D444A05004E3B3F /* MainMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CBDF3091D444A05004E3B3F /* MainMenu.sks */; };
 		2CBDF30C1D444CEA004E3B3F /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBDF30B1D444CEA004E3B3F /* MainMenu.swift */; };
 		2CE19BDC1D4BE27400B28368 /* Fork.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CE19BDB1D4BE27400B28368 /* Fork.sks */; };
@@ -76,7 +79,7 @@
 		2C253E041D4546C8004ECE1B /* MSButtonNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MSButtonNode.swift; path = ../MSButtonNode.swift; sourceTree = "<group>"; };
 		2C299D7B1D367A20000D3409 /* Butter!.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Butter!.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C299D7E1D367A20000D3409 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		2C299D821D367A20000D3409 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; wrapsLines = 1; };
+		2C299D821D367A20000D3409 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		2C299D841D367A20000D3409 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		2C299D871D367A20000D3409 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		2C299D8C1D367A20000D3409 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -93,8 +96,11 @@
 		2C54CA7B1D429BE600B641EE /* TitlePage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitlePage.swift; sourceTree = "<group>"; };
 		2C54F07A1D4569A700A645AB /* GameOverScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameOverScene.swift; sourceTree = "<group>"; };
 		2C54F0801D456A0100A645AB /* GameOverScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = GameOverScene.sks; path = ../GameOverScene.sks; sourceTree = "<group>"; };
+		2C6AB9B91D590DED0004536C /* DroppedPancake2.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = DroppedPancake2.caf; sourceTree = "<group>"; };
 		2C8F225E1D4453320090B10D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2CAD41C31D39270D00BC6222 /* AnimationActions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = AnimationActions.sks; sourceTree = "<group>"; };
+		2CB66FCC1D58D41A00065E02 /* ForkKnife.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ForkKnife.caf; sourceTree = "<group>"; };
+		2CB66FCE1D58DB1000065E02 /* flyingPancake.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = flyingPancake.caf; sourceTree = "<group>"; };
 		2CBDF3091D444A05004E3B3F /* MainMenu.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = MainMenu.sks; path = ../MainMenu.sks; sourceTree = "<group>"; };
 		2CBDF30B1D444CEA004E3B3F /* MainMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		2CE19BDB1D4BE27400B28368 /* Fork.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = Fork.sks; path = "Butter!/Fork.sks"; sourceTree = "<group>"; };
@@ -193,6 +199,7 @@
 				2C54F0801D456A0100A645AB /* GameOverScene.sks */,
 				2C299D841D367A20000D3409 /* GameViewController.swift */,
 				2C8F225E1D4453320090B10D /* Assets.xcassets */,
+				2CB66FC51D58CF6100065E02 /* SFX */,
 				2C299D861D367A20000D3409 /* Main.storyboard */,
 				2C299D8B1D367A20000D3409 /* LaunchScreen.storyboard */,
 				2C299D8E1D367A20000D3409 /* Info.plist */,
@@ -217,6 +224,16 @@
 				2C299DA41D367A20000D3409 /* Info.plist */,
 			);
 			path = "Butter!UITests";
+			sourceTree = "<group>";
+		};
+		2CB66FC51D58CF6100065E02 /* SFX */ = {
+			isa = PBXGroup;
+			children = (
+				2CB66FCC1D58D41A00065E02 /* ForkKnife.caf */,
+				2CB66FCE1D58DB1000065E02 /* flyingPancake.caf */,
+				2C6AB9B91D590DED0004536C /* DroppedPancake2.caf */,
+			);
+			name = SFX;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -326,13 +343,16 @@
 			files = (
 				2CAD41C41D39270D00BC6222 /* AnimationActions.sks in Resources */,
 				2CE19BDE1D4BE28D00B28368 /* Knife.sks in Resources */,
+				2CB66FCD1D58D41A00065E02 /* ForkKnife.caf in Resources */,
 				2C299D8D1D367A20000D3409 /* LaunchScreen.storyboard in Resources */,
 				2C54CA7A1D42976A00B641EE /* TitlePage.sks in Resources */,
+				2C6AB9BA1D590DED0004536C /* DroppedPancake2.caf in Resources */,
 				2CE19BDC1D4BE27400B28368 /* Fork.sks in Resources */,
 				2C299D881D367A20000D3409 /* Main.storyboard in Resources */,
 				2CBDF30A1D444A05004E3B3F /* MainMenu.sks in Resources */,
 				2C299DB51D367E47000D3409 /* GameScene.sks in Resources */,
 				2C8F225F1D4453320090B10D /* Assets.xcassets in Resources */,
+				2CB66FCF1D58DB1000065E02 /* flyingPancake.caf in Resources */,
 				2C54F0811D456A0100A645AB /* GameOverScene.sks in Resources */,
 				2C299DB31D367D42000D3409 /* Pancake.sks in Resources */,
 			);

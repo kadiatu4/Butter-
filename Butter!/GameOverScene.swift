@@ -11,31 +11,33 @@ import SpriteKit
 class GameOverScene: SKScene {
     
     //Stores Stores and Bonus Points
-    var highScore: SKLabelNode!
-    var highscoreVal:Int  = 0 {
-        didSet{
-            highScore.text = String(highscoreVal)
-        }
-    }
+    var highscoreLabel: SKLabelNode!
+    var highscore: Int = highscoreVal
+    
     var currentScore: SKLabelNode!
-    var point: Int = 0{
-        didSet{
-            currentScore.text = String(point)
-        }}
+    
+    var points: Int = CurrentScore
+    
     var currentCoins: SKLabelNode!
     var bonus: SKLabelNode!
     
     override func didMoveToView(view: SKView) {
         //Setup your scene
-       
+    
         //Reference for highScore
-        var highScore = childNodeWithName("highScore") as! SKLabelNode
+         highscoreLabel = childNodeWithName("highscoreLabel") as! SKLabelNode
+        
+        //Changes value of High Score
+        highscoreLabel.text = String(highscore)
         
         //Reference for current score
-        var currentScore = childNodeWithName("currentScore") as! SKLabelNode
+        currentScore = childNodeWithName("currentScore") as! SKLabelNode
         
+        //Changes value of Current Score
+        currentScore.text = String(points)
+    
         //Reference for current coins
-        var currentCoins = childNodeWithName("currentCoins") as! SKLabelNode
+        // currentCoins = childNodeWithName("currentCoins") as! SKLabelNode
            
         
     }
