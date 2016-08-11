@@ -43,6 +43,9 @@
 		2CBDF30C1D444CEA004E3B3F /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBDF30B1D444CEA004E3B3F /* MainMenu.swift */; };
 		2CE19BDC1D4BE27400B28368 /* Fork.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CE19BDB1D4BE27400B28368 /* Fork.sks */; };
 		2CE19BDE1D4BE28D00B28368 /* Knife.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CE19BDD1D4BE28D00B28368 /* Knife.sks */; };
+		2CFB11601D5BFA0D002D829B /* objectContact.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2CFB115E1D5BFA0D002D829B /* objectContact.wav */; };
+		2CFB11611D5BFA0D002D829B /* fallingPancake.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2CFB115F1D5BFA0D002D829B /* fallingPancake.wav */; };
+		2CFB11631D5BFF05002D829B /* PlayClicked.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2CFB11621D5BFF05002D829B /* PlayClicked.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -105,6 +108,9 @@
 		2CBDF30B1D444CEA004E3B3F /* MainMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		2CE19BDB1D4BE27400B28368 /* Fork.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = Fork.sks; path = "Butter!/Fork.sks"; sourceTree = "<group>"; };
 		2CE19BDD1D4BE28D00B28368 /* Knife.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Knife.sks; sourceTree = "<group>"; };
+		2CFB115E1D5BFA0D002D829B /* objectContact.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = objectContact.wav; sourceTree = "<group>"; };
+		2CFB115F1D5BFA0D002D829B /* fallingPancake.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = fallingPancake.wav; sourceTree = "<group>"; };
+		2CFB11621D5BFF05002D829B /* PlayClicked.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = PlayClicked.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -229,6 +235,9 @@
 		2CB66FC51D58CF6100065E02 /* SFX */ = {
 			isa = PBXGroup;
 			children = (
+				2CFB115E1D5BFA0D002D829B /* objectContact.wav */,
+				2CFB115F1D5BFA0D002D829B /* fallingPancake.wav */,
+				2CFB11621D5BFF05002D829B /* PlayClicked.wav */,
 				2CB66FCC1D58D41A00065E02 /* ForkKnife.caf */,
 				2CB66FCE1D58DB1000065E02 /* flyingPancake.caf */,
 				2C6AB9B91D590DED0004536C /* DroppedPancake2.caf */,
@@ -346,6 +355,7 @@
 				2CB66FCD1D58D41A00065E02 /* ForkKnife.caf in Resources */,
 				2C299D8D1D367A20000D3409 /* LaunchScreen.storyboard in Resources */,
 				2C54CA7A1D42976A00B641EE /* TitlePage.sks in Resources */,
+				2CFB11631D5BFF05002D829B /* PlayClicked.wav in Resources */,
 				2C6AB9BA1D590DED0004536C /* DroppedPancake2.caf in Resources */,
 				2CE19BDC1D4BE27400B28368 /* Fork.sks in Resources */,
 				2C299D881D367A20000D3409 /* Main.storyboard in Resources */,
@@ -353,7 +363,9 @@
 				2C299DB51D367E47000D3409 /* GameScene.sks in Resources */,
 				2C8F225F1D4453320090B10D /* Assets.xcassets in Resources */,
 				2CB66FCF1D58DB1000065E02 /* flyingPancake.caf in Resources */,
+				2CFB11601D5BFA0D002D829B /* objectContact.wav in Resources */,
 				2C54F0811D456A0100A645AB /* GameOverScene.sks in Resources */,
+				2CFB11611D5BFA0D002D829B /* fallingPancake.wav in Resources */,
 				2C299DB31D367D42000D3409 /* Pancake.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -19,7 +19,8 @@ import SpriteKit
 class MainMenu: SKScene {
     /* UI Connection */
    var buttonPlay: MSButtonNode!
-
+   var buttonPressed: Bool = false
+    
     //Time the Intro
     var spawnTimer: CFTimeInterval = 0
     let fixedDelta: CFTimeInterval = 1.0/60.0 /* 60 FPS*/
@@ -31,7 +32,22 @@ class MainMenu: SKScene {
         
         //Set restart button selection handler
         buttonPlay.selectedHandler = {
+            self.buttonPressed = false
+            //SFX
+            let playSFX = SKAction.playSoundFileNamed("PlayClicked", waitForCompletion: true)
+            self.runAction(playSFX)
             
+            
+             self.buttonPressed = true
+            
+            
+        }
+        
+    }
+    
+    override func update(currentTime: NSTimeInterval) {
+        
+        if buttonPressed == true{
             //grab reference to SpiteKit view
             let skView = self.view as SKView!
             //Load Game scene
@@ -42,14 +58,8 @@ class MainMenu: SKScene {
             
             //Start Game Scene
             skView.presentScene(scene)
-            
-            
         }
+
         
-    }
-    
-    override func update(currentTime: NSTimeInterval) {
-        
-    
     }
 }
