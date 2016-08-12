@@ -21,6 +21,9 @@ class GameOverScene: SKScene {
     var currentCoins: SKLabelNode!
     var bonus: SKLabelNode!
     
+    var onVolume: MSButtonNode!
+    var offVolume: MSButtonNode!
+    
     override func didMoveToView(view: SKView) {
         //Setup your scene
     
@@ -35,7 +38,35 @@ class GameOverScene: SKScene {
         
         //Changes value of Current Score
         currentScore.text = String(points)
-    
+        
+        //Reference for Volume button
+        onVolume = childNodeWithName("onVolume") as! MSButtonNode
+        
+        offVolume = childNodeWithName("offVolume") as! MSButtonNode
+        
+        if volumeOn == true{
+            offVolume.hidden = true
+        }
+        else if volumeOff == true{
+            onVolume.hidden = true
+        }
+        //Set On Volume button
+        onVolume.selectedHandler = {
+            self.onVolume.hidden = true
+            self.offVolume.hidden = false
+            volumeOn = false
+            volumeOff = true
+        }
+        
+        //Set Off Volume button
+        offVolume.selectedHandler = {
+            self.offVolume.hidden = true
+            self.onVolume.hidden = false
+            volumeOn = true
+            volumeOff = false
+        }
+        
+
         //Reference for current coins
         // currentCoins = childNodeWithName("currentCoins") as! SKLabelNode
            

@@ -7,9 +7,15 @@
 //
 
 import SpriteKit
+import Firebase
+import FirebaseDatabase
+import FBSDKCoreKit
+import FBSDKShareKit
+import FBSDKLoginKit
+import AVFoundation
 
 enum GameState{
-    case Menu, Active, GameOver
+    case Loading, Active, GameOver
 }
 
 enum Object{
@@ -30,10 +36,25 @@ didSet{
     }
 }
 
+/* Social profile structure */
+struct Profile {
+    var name = ""
+    var imgURL = ""
+    var facebookId = ""
+    var score = 0
+}
 
 class GameScene: SKScene{
     //Game State
-    var gameState: GameState = .Menu
+    var gameState: GameState = .Loading{
+        didSet{
+            if gameState == .Active{
+                firstPancake()
+            }
+        }
+    }
+    
+    //Tracks the object on screen
     var currentObject: Object = .None
     
     /* UI Objects */
@@ -64,6 +85,7 @@ class GameScene: SKScene{
     //Stores different Times
     var spawnTimer: CFTimeInterval = 0
     var sinceTouch: CFTimeInterval = 0
+    var spawnObject: CFTimeInterval = 0
     
     //Scrolls Background
     var scrollLayer: SKNode!
@@ -101,8 +123,28 @@ class GameScene: SKScene{
         SKTexture(imageNamed: "cutPancake1"),
     ]
     
+    //Facebook User Profile
+    var playerProfile = Profile()
+
+    /* Firebase connection */
+    var firebaseRef = FIRDatabase.database().referenceWithPath("/highscore")
+
+    /* High score custom dictionary */
+    var scoreTower: [Int:Profile] = [:]
+    
+    //Pancake creation counter
+    var pancakeCounter = 0
+    
     override func didMoveToView(view: SKView) {
-      
+        
+        //Allows User to continue listening to their Music
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+            try AVAudioSession.sharedInstance().setActive(true)
+        }
+        catch let error as NSError {
+            print(error)
+        }
         
         //Reference for Counter Top
         counterTop = self.childNodeWithName("counterTop") as! SKSpriteNode
@@ -137,7 +179,7 @@ class GameScene: SKScene{
         //Reference for Camera position when game ends
         cameraPosition = self.childNodeWithName("cameraPosition")
         
-        //Stores the Players HIGHSCORE
+        /* Stores the Players HIGHSCORE */
         let highscoreDefault = NSUserDefaults.standardUserDefaults()
         
         if (highscoreDefault.valueForKey("Highscore") != nil){
@@ -145,27 +187,70 @@ class GameScene: SKScene{
             highscoreVal = highscoreDefault.valueForKey("Highscore") as! NSInteger
         }
 
-        //Creates Pancake
-        let Pancake = MSReferenceNode(URL: NSURL (fileURLWithPath: resourcePath!))
+        /* Facebook authentication check */
+        if (FBSDKAccessToken.currentAccessToken() == nil) {
+            
+            /* No access token, begin FB authentication process */
+            FBSDKLoginManager().logInWithReadPermissions(["public_profile","email","user_friends"], fromViewController:self.view?.window?.rootViewController, handler: {
+                (facebookResult, facebookError) -> Void in
+                
+                if facebookError != nil {
+                    print("Facebook login failed. Error \(facebookError)")
+                } else if facebookResult.isCancelled {
+                    print("Facebook login was cancelled.")
+                } else {
+                    let accessToken = FBSDKAccessToken.currentAccessToken().tokenString
+                    
+                    print(accessToken)
+                }
+            })
+        }
         
-        //Add Pancakes in Array
-        pancakeTower.append(Pancake)
-
-        //Add Pancakes
-        addChild(Pancake)
+        /* Facebook profile lookup */
+        if (FBSDKAccessToken.currentAccessToken() != nil) {
+            
+            FBSDKGraphRequest(graphPath: "me", parameters: ["fields": "id, first_name"]).startWithCompletionHandler({ (connection, result, error) -> Void in
+                if (error == nil){
+                    
+                    /* Update player profile */
+                    self.playerProfile.facebookId = result.valueForKey("id") as! String
+                    self.playerProfile.name = result.valueForKey("first_name") as! String
+                    self.playerProfile.imgURL = "https://graph.facebook.com/\(self.playerProfile.facebookId)/picture?type=small"
+                    print(self.playerProfile)
+                }
+            })
+        }
         
-        //Appear Pancake
-        appearPancake(Pancake)
-        
-        //Stack Pancakes on top of each other
-        let startPosition = 160
-        addYPosition += 20
-        let newYPosition = startPosition + addYPosition
-        
-        //Position Pancake
-        Pancake.position = CGPoint(x: -120 , y: newYPosition)
-    
-        
+        /*  FIREBASE */
+        firebaseRef.queryOrderedByChild("score").queryLimitedToLast(5).observeEventType(.Value, withBlock: { snapshot in
+            
+            /* Check snapshot has results */
+            if snapshot.exists() {
+                
+                /* Loop through data entries */
+                for child in snapshot.children {
+                    
+                    /* Create new player profile */
+                    var profile = Profile()
+                    
+                    /* Assign player name */
+                    profile.name = child.key
+                    
+                    /* Assign profile data */
+                    profile.imgURL = child.value.objectForKey("image") as! String
+                    profile.facebookId = String(child.value.objectForKey("id")!)
+                    profile.score = child.value.objectForKey("score") as! Int
+                    
+                    /* Add new high score profile to score tower using score as index */
+                    self.scoreTower[profile.score] = profile
+                }
+            }
+            //Set game state to active
+            self.gameState = .Active
+            
+        }) { (error) in
+            print(error.localizedDescription)
+        }
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -183,7 +268,7 @@ class GameScene: SKScene{
         let Pancake = MSReferenceNode(URL: NSURL (fileURLWithPath: resourcePath!))
 
         for touch in touches {
-            Coins += 1
+           
             //Grab scene position of touch
             let location = touch.locationInNode(self)
             
@@ -195,8 +280,10 @@ class GameScene: SKScene{
                 //To prevent fork and Knife action from occuring
                 objectTouched = true
                 
-                let touchedSFX = SKAction.playSoundFileNamed("ForkKnife", waitForCompletion: true)
-                self.runAction(touchedSFX)
+                if volumeOn == true{
+                    let touchedSFX = SKAction.playSoundFileNamed("ForkKnife", waitForCompletion: true)
+                    self.runAction(touchedSFX)
+                }
                 
                 //Moves ForK
                 let moveUp = SKAction.moveBy(CGVector(dx: 0, dy: 300), duration: 0.5)
@@ -208,24 +295,28 @@ class GameScene: SKScene{
                 
                 fork.runAction(sequence)
                 
-                objectTouched = false
-
-     
+                objectTouched = true
+                objectDone = true
+               
+                
             }
             else if touchedNode.name == "touchedKnife"{
                 
                 //To prevent fork and Knife action from occuring
-                objectTouched = true
+               objectTouched = true
                 
-                let touchedSFX = SKAction.playSoundFileNamed("ForkKnife", waitForCompletion: true)
-                self.runAction(touchedSFX)
-
+                if volumeOn == true {
+                    let touchedSFX = SKAction.playSoundFileNamed("ForkKnife", waitForCompletion: true)
+                    self.runAction(touchedSFX)
+                }
                 //Sets the knife to move off screen
                 let moveKnife = SKAction.moveToX(-211, duration: 0.5)
                
                 knife.runAction(moveKnife)
+               
+                objectTouched = true
+                 objectDone = true
                 
-                objectTouched = false
             }
             else {
                     //Drops Previous Pancake
@@ -234,17 +325,17 @@ class GameScene: SKScene{
                     //Flip Pancakes Animation
                     flipPancakes(currentPancake)
                 
-                if objectTouched == true || objectDone == true {
-                    //Depending on the value a Fork or Knife will appear
-                    getrandomNumber()
-                }
+//                    //Depending on the value a Fork or Knife will appear
+//                    getrandomNumber()
+               
+                
                 if endGame == false && interference == false{
                     //Increment the index of the Pancakes
                     prevCount = currCount
                     currCount += 1
                 }
         
-                if sinceTouch > 0.4 && interference == false && endGame == false && objectDone == true{
+                if sinceTouch > 0.4 && interference == false && endGame == false {
                     
                    //Appear Pancake
                     appearPancake(Pancake)
@@ -317,75 +408,160 @@ class GameScene: SKScene{
     override func update(currentTime: CFTimeInterval) {
         //Disable touch if Game is Over
         if endGame == true || gameState == .GameOver{return}
-
         
-        //Stores the current Pancake
-        let currentPancake = pancakeTower[currCount]
-
-        //Scroll Background
-        if pancakeTower.count >= 7{
-            scrollBackground()
-        }
-        
-        /*Update time since Pancake was dropped*/
-        sinceTouch += fixedDelta
-
-        
-        /* Check we have a valid camera target to follow */
-        if let cameraTarget = cameraTarget {
+        //Executes when the game state is .Active
+        if gameState == .Active{
             
-            /* Set camera position to follow target vertically, keep horizontal locked */
-            camera?.position = CGPoint(x:camera!.position.x, y:cameraTarget.position.y)
-        
-            /* Clamp camera scrolling to our visible scene area only */
-            camera?.position.y.clamp(220, currentPancake.position.y)
-        }
-     
-        if objectTouched == true {
-            objectDone = true
-            interference = false
-        }
-        
-        if objectDone == true{
-            interference = false
-        }
-        
-        //To make sure only one object appears at a time
-        if currentObject == .None{
-            knife.hidden = true
-            fork.hidden = true
+            //Stores the current Pancake
+            let currentPancake = pancakeTower[currCount]
+
+            //Scroll Background
+            if pancakeTower.count >= 7{
+                scrollBackground()
+            }
             
-            //Must sure fork and Knife remain at their position
-            knife.position.x = -211
-            fork.position.x = -120
+            /*Update time since Pancake was dropped*/
+            sinceTouch += fixedDelta
+            
+            /*Update time since Object appears*/
+            spawnObject += fixedDelta
+        
+            /* Check we have a valid camera target to follow */
+            if let cameraTarget = cameraTarget {
+                
+                /* Set camera position to follow target vertically, keep horizontal locked */
+                camera?.position = CGPoint(x:camera!.position.x, y:cameraTarget.position.y)
+            
+                /* Clamp camera scrolling to our visible scene area only */
+                camera?.position.y.clamp(220, currentPancake.position.y)
+            }
+         
+            if objectTouched == true {
+                interference = false
+            }
+            
+            if objectDone == true{
+                interference = false
+                objectDone = false
+            }
+            
+//            if interference == false{
+//                //Generates a random value (10)
+//                let randomTime = Double(arc4random_uniform(9) + 1)
+//                print(randomTime)
+//                if spawnObject > randomTime && spawnObject <= randomTime + 1{
+//                    //Depending on the value a Fork or Knife will appear
+//                    getrandomNumber()
+//                    spawnObject = 0
+//
+//                }
+//                
+//            }
+            
+            //To make sure only one object appears at a time
+            if currentObject == .None{
+                knife.hidden = true
+                fork.hidden = true
+                
+                //Must sure fork and Knife remain at their position
+                knife.position.x = -211
+                fork.position.x = -120
+            }
+            else if currentObject == .Fork{
+                knife.hidden = true
+                fork.hidden = false
+            }
+            else if currentObject == .Knife{
+                fork.hidden = true
+                knife.hidden = false
+            }
+           
+        
+            //Updates the highscore
+            if score > highscoreVal{
+                highscoreVal = score
+                let highscoreDefault = NSUserDefaults.standardUserDefaults()
+                highscoreDefault.setValue(highscoreVal, forKey: "Highscore")
+                highscoreDefault.synchronize()
+            }
+            
+            //Stores the current Score
+            CurrentScore = score
         }
-        else if currentObject == .Fork{
-            knife.hidden = true
-            fork.hidden = false
-        }
-        else if currentObject == .Knife{
-            fork.hidden = true
-            knife.hidden = false
-        }
-       
+    }
     
-        //Updates the highscore
-        if score > highscoreVal{
-            highscoreVal = score
-            let highscoreDefault = NSUserDefaults.standardUserDefaults()
-            highscoreDefault.setValue(highscoreVal, forKey: "Highscore")
-            highscoreDefault.synchronize()
-        }
+    func highscoreData(){
+        //Stores the previous Pancake
+        let previousPancake = pancakeTower[prevCount]
+
+        /* Do we have a social score to add to the current pancake piece? */
+        guard let profile = scoreTower[pancakeCounter] else { return }
         
-        //Stores the current Score
-        CurrentScore = score
+        /* Grab profile image */
+        guard let imgURL = NSURL(string: profile.imgURL) else { return }
+        
+        /* Perform code block asynchronously in background queue */
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            
+            /* Perform image download task */
+            guard let imgData = NSData(contentsOfURL: imgURL) else { return }
+            guard let img = UIImage(data: imgData) else { return }
+            
+            /* Perform code block asynchronously in main queue */
+            dispatch_async(dispatch_get_main_queue()) {
+                
+                /* Create texture from image */
+                let imgTex = SKTexture(image: img)
+                
+                /* Create background border */
+                let imgNodeBg = SKSpriteNode(color: UIColor.whiteColor(), size: CGSize(width: 57, height: 57))
+                
+                /* Add as child of pancake piece */
+                self.camera!.addChild(imgNodeBg)
+                
+                imgNodeBg.zPosition = previousPancake.zPosition + 1
+                imgNodeBg.position = CGPointMake(118,153)
+                
+                /* Create a new sprite using profile texture, cap size */
+                let imgNode = SKSpriteNode(texture: imgTex, size: CGSize(width: 52, height: 52))
+                
+                /* Add profile sprite as child of pancake piece */
+                imgNodeBg.addChild(imgNode)
+                imgNode.zPosition = imgNodeBg.zPosition + 1
+                
+            }
+        }
+    }
+    
+    
+    func firstPancake(){
+        //Creates Pancake
+        let Pancake = MSReferenceNode(URL: NSURL (fileURLWithPath: resourcePath!))
+        
+        //Add Pancakes in Array
+        pancakeTower.append(Pancake)
+        
+        //Add Pancakes
+        addChild(Pancake)
+        
+        //Appear Pancake
+        appearPancake(Pancake)
+        
+        //Stack Pancakes on top of each other
+        let startPosition = 160
+        addYPosition += 20
+        let newYPosition = startPosition + addYPosition
+        
+        //Position Pancake
+        Pancake.position = CGPoint(x: -120 , y: newYPosition)
+        
     }
     
     func appearPancake(Pancake: MSReferenceNode){
     
         //Set values for where the pancake should reach on the screen
-        let moveFromLeft = SKAction.moveToX(-15, duration: 0.2)
-        let moveFromRight = SKAction.moveToX(320, duration: 0.2)
+        let moveFromLeft = SKAction.moveToX(-15, duration: 0.1)
+        let moveFromRight = SKAction.moveToX(320, duration: 0.1)
         
         //Pancakes Appear from Right
         if pancakeTower.count % 2 == 0 {
@@ -469,11 +645,12 @@ class GameScene: SKScene{
         //Drops the pancake down by 100
         Pancake.runAction(SKAction.sequence([
             SKAction.moveBy(CGVector(dx: 0, dy: -100), duration: 0.10)]))
-        
-        let dropSFX = SKAction.playSoundFileNamed("DroppedPancake2", waitForCompletion: true)
-        self.runAction(dropSFX)
-
-          }
+       
+        if volumeOn == true {
+            let dropSFX = SKAction.playSoundFileNamed("DroppedPancake2", waitForCompletion: true)
+            self.runAction(dropSFX)
+        }
+    }
     
     func checkPancakePosition(){
 //        //Stores the previous Pancake
@@ -565,16 +742,30 @@ class GameScene: SKScene{
         else{
             //Score
             score += 1
+            
+            //Pancake tracker
+            pancakeCounter += 1
+            
+            highscoreData()
+            
+        }
+        
+        //if pancakes are
+        if location.x > edgeLeft && location.x < edgeRight{
+            
+            Coins += 5
+            
         }
         //Only executes when endGame == true
         if endGame == true {
-        //SFX
-        let flipSFX = SKAction.playSoundFileNamed("fallingPancake", waitForCompletion: false)
-        self.runAction(flipSFX)
-            
-        //Delays the Game Over Scene until after animation
-        self.delay(1.8){
-              self.gameOver()
+            if volumeOn == true {
+                //SFX
+                let flipSFX = SKAction.playSoundFileNamed("fallingPancake", waitForCompletion: false)
+                self.runAction(flipSFX)
+            }
+            //Delays the Game Over Scene until after animation
+            self.delay(1.8){
+                  self.gameOver()
             }
         }
     }
@@ -603,8 +794,12 @@ class GameScene: SKScene{
        
         //Stores the previous Pancake
         let previousPancake = pancakeTower[prevCount]
+        
+        objectDone = false
+        
+        if currentObject == .Fork {
 
-            if currentObject == .Fork  && objectTouched == false {
+            if objectTouched == false {
                 
             //Actions
             let moveUp = SKAction.moveBy(CGVector(dx: 0, dy:300), duration: 0.5)
@@ -613,16 +808,17 @@ class GameScene: SKScene{
             fork.runAction(moveUp)
             stealPancake(previousPancake)
                 
-            //SFX
-            let stolenSFX = SKAction.playSoundFileNamed("objectContact", waitForCompletion: true)
-            self.runAction(stolenSFX)
-            
+            if volumeOn == true {
+                //SFX
+                let stolenSFX = SKAction.playSoundFileNamed("objectContact", waitForCompletion: true)
+                self.runAction(stolenSFX)
+            }
             //Reset fork X-Position
             fork.position.x = -120
             
             objectDone = true
             }
-
+        }
         
     }
 
@@ -670,7 +866,7 @@ class GameScene: SKScene{
 
             fork.runAction(sequence)
            
-            if objectTouched == false && objectDone == true {
+            if objectTouched == false{
                  delay(2){
                     
                      //Calls fork Action Function
@@ -688,10 +884,11 @@ class GameScene: SKScene{
         let animateAction = SKAction.animateWithTextures(self.pancakeTextures, timePerFrame: 0.5)
         Pancake.avatar.runAction(animateAction)
         
-        //SFX
-        let cutSFX = SKAction.playSoundFileNamed("objectContact", waitForCompletion: true)
-        self.runAction(cutSFX)
-        
+        if volumeOn == true {
+            //SFX
+            let cutSFX = SKAction.playSoundFileNamed("objectContact", waitForCompletion: true)
+            self.runAction(cutSFX)
+        }
 
     }
     
@@ -700,9 +897,12 @@ class GameScene: SKScene{
         //Stores the previous Pancake
         let previousPancake = pancakeTower[prevCount]
         
+        objectDone = false
         
-        if currentObject == .Knife && objectTouched == false {
-            objectDone = false
+        if currentObject == .Knife {
+            
+            if objectTouched == false {
+            
             //Action
               animatePancake(previousPancake)
             
@@ -715,7 +915,7 @@ class GameScene: SKScene{
                 knife.position.x = -211
                 
                 objectDone = true
-           
+            }
         }
     }
 
@@ -753,7 +953,7 @@ class GameScene: SKScene{
             let sequence = SKAction.sequence([findPancake, dropKnife])
             knife.runAction(sequence)
             
-            if objectTouched == false && objectDone == true {
+            if objectTouched == false{
                 delay(2){
                     
                     //Calls knife Action Function
@@ -767,6 +967,10 @@ class GameScene: SKScene{
     }
 
     func getrandomNumber(){
+        
+        //Set object touched to false
+        objectTouched = false
+        
         //Generates a random value
         let randomNumber = Int(arc4random_uniform(100) + 1)
     
@@ -818,6 +1022,31 @@ class GameScene: SKScene{
     /* Game over! */
     gameState = .GameOver
     
+    /* Check for new high score and has a facebook user id */
+    if score > playerProfile.score && !playerProfile.facebookId.isEmpty {
+        
+        /* Update profile score */
+        playerProfile.score = score
+        
+        /* Build data structure to be saved to firebase */
+        let saveProfile = [playerProfile.name :
+            ["image" : playerProfile.imgURL,
+                "score" : playerProfile.score,
+                "id" : playerProfile.facebookId ]]
+        
+        /* Save to Firebase */
+        firebaseRef.updateChildValues(saveProfile, withCompletionBlock: {
+            (error:NSError?, ref:FIRDatabaseReference!) in
+            if (error != nil) {
+                print("Data save failed: ",error)
+            } else {
+                print("Data saved success")
+            }
+        })
+        
+    }
+    
+    //Reset Score
     score = 0
     
     //grab reference to SpiteKit view

@@ -16,10 +16,17 @@
 
 import SpriteKit
 
+//For the music
+var volumeOn: Bool = true
+var volumeOff: Bool = false
+
 class MainMenu: SKScene {
     /* UI Connection */
    var buttonPlay: MSButtonNode!
    var buttonPressed: Bool = false
+    
+    var onVolume: MSButtonNode!
+    var offVolume: MSButtonNode!
     
     //Time the Intro
     var spawnTimer: CFTimeInterval = 0
@@ -29,6 +36,13 @@ class MainMenu: SKScene {
     override func didMoveToView(view: SKView) {        
         //Reference for Play Button
         buttonPlay = childNodeWithName("buttonPlay") as! MSButtonNode
+        
+        //Reference for Volume button
+        onVolume = childNodeWithName("onVolume") as! MSButtonNode
+        
+        offVolume = childNodeWithName("offVolume") as! MSButtonNode
+        
+        offVolume.hidden = true
         
         //Set restart button selection handler
         buttonPlay.selectedHandler = {
@@ -42,6 +56,23 @@ class MainMenu: SKScene {
             
             
         }
+        
+        //Set On Volume button
+        onVolume.selectedHandler = {
+            self.onVolume.hidden = true
+            self.offVolume.hidden = false
+            volumeOn = false
+            volumeOff = true
+        }
+        
+        //Set Off Volume button
+        offVolume.selectedHandler = {
+            self.offVolume.hidden = true
+            self.onVolume.hidden = false
+            volumeOn = true
+            volumeOff = false
+        }
+        
         
     }
     
