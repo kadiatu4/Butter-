@@ -12,7 +12,6 @@ import FirebaseDatabase
 import FBSDKCoreKit
 import FBSDKShareKit
 import FBSDKLoginKit
-import AVFoundation
 
 enum GameState{
     case Loading, Active, GameOver
@@ -136,15 +135,6 @@ class GameScene: SKScene{
     var pancakeCounter = 0
     
     override func didMoveToView(view: SKView) {
-        
-        //Allows User to continue listening to their Music
-        do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
-            try AVAudioSession.sharedInstance().setActive(true)
-        }
-        catch let error as NSError {
-            print(error)
-        }
         
         //Reference for Counter Top
         counterTop = self.childNodeWithName("counterTop") as! SKSpriteNode

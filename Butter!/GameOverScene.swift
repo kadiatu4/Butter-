@@ -21,8 +21,12 @@ class GameOverScene: SKScene {
     var currentCoins: SKLabelNode!
     var bonus: SKLabelNode!
     
+    //Volume
     var onVolume: MSButtonNode!
     var offVolume: MSButtonNode!
+    
+    //Homepage
+    var home: MSButtonNode!
     
     override func didMoveToView(view: SKView) {
         //Setup your scene
@@ -41,8 +45,26 @@ class GameOverScene: SKScene {
         
         //Reference for Volume button
         onVolume = childNodeWithName("onVolume") as! MSButtonNode
-        
         offVolume = childNodeWithName("offVolume") as! MSButtonNode
+        
+        //Reference for Home page
+        home = childNodeWithName("home") as! MSButtonNode
+        
+        //Executes when button is pressed
+        home.selectedHandler = {
+            //grab reference to SpiteKit view
+            let skView = self.view as SKView!
+            //Load Game scene
+            let scene = MainMenu(fileNamed: "MainMenu") as MainMenu!
+            
+            //Ensure correct aspect mode
+            scene.scaleMode = .AspectFill
+            
+            //Start Game Scene
+            skView.presentScene(scene)
+
+        }
+        
         
         if volumeOn == true{
             offVolume.hidden = true

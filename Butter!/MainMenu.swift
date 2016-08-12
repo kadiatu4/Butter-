@@ -15,6 +15,7 @@
 //
 
 import SpriteKit
+import AVFoundation
 
 //For the music
 var volumeOn: Bool = true
@@ -28,12 +29,24 @@ class MainMenu: SKScene {
     var onVolume: MSButtonNode!
     var offVolume: MSButtonNode!
     
+    var info: MSButtonNode!
+    
     //Time the Intro
     var spawnTimer: CFTimeInterval = 0
     let fixedDelta: CFTimeInterval = 1.0/60.0 /* 60 FPS*/
   
     
-    override func didMoveToView(view: SKView) {        
+    override func didMoveToView(view: SKView) {
+        
+        //Allows User to continue listening to their Music
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+            try AVAudioSession.sharedInstance().setActive(true)
+        }
+        catch let error as NSError {
+            print(error)
+        }
+
         //Reference for Play Button
         buttonPlay = childNodeWithName("buttonPlay") as! MSButtonNode
         
@@ -42,7 +55,15 @@ class MainMenu: SKScene {
         
         offVolume = childNodeWithName("offVolume") as! MSButtonNode
         
-        offVolume.hidden = true
+        //Reference for Info Button 
+        info = childNodeWithName("info") as! MSButtonNode
+        
+        if volumeOn == true{
+            offVolume.hidden = true
+        }
+        else if volumeOff == true{
+            onVolume.hidden = true
+        }
         
         //Set restart button selection handler
         buttonPlay.selectedHandler = {
@@ -71,6 +92,11 @@ class MainMenu: SKScene {
             self.onVolume.hidden = false
             volumeOn = true
             volumeOff = false
+        }
+        
+        //Set Info button
+        info.selectedHandler = {
+            let transition =
         }
         
         
