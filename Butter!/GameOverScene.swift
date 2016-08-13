@@ -5,7 +5,8 @@
 //  Created by Kadiatou Diallo on 7/24/16.
 //  Copyright © 2016 Kadiatou Diallo. All rights reserved.
 //
-
+import Foundation
+import UIKit
 import SpriteKit
 
 class GameOverScene: SKScene {
@@ -31,9 +32,10 @@ class GameOverScene: SKScene {
     //Share
     var share: MSButtonNode!
     
+
     override func didMoveToView(view: SKView) {
         //Setup your scene
-    
+        
         //Reference for highScore
          highscoreLabel = childNodeWithName("highscoreLabel") as! SKLabelNode
         
@@ -122,7 +124,7 @@ class GameOverScene: SKScene {
 
     }
     func shareScore(scene: SKScene) {
-        let postText: String = "Check out my score! Can you beat it?"
+        let postText: String = "Check out my score! Can you beat it? #BUTTER!"
         let postImage: UIImage = getScreenshot(scene)
         let activityItems = [postText, postImage]
         let activityController = UIActivityViewController(
@@ -130,7 +132,7 @@ class GameOverScene: SKScene {
             applicationActivities: nil
         )
         
-        var controller: UIViewController = scene.view!.window!.rootViewController!
+        let controller: UIViewController = scene.view!.window!.rootViewController!
         
         controller.presentViewController(
             activityController,
@@ -143,11 +145,11 @@ class GameOverScene: SKScene {
         let snapshotView = scene.view!.snapshotViewAfterScreenUpdates(true)
         let bounds = UIScreen.mainScreen().bounds
         
-        UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0)
+        UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.mainScreen().scale)
         
         snapshotView.drawViewHierarchyInRect(bounds, afterScreenUpdates: true)
         
-        var screenshotImage : UIImage = UIGraphicsGetImageFromCurrentImageContext()
+        let screenshotImage : UIImage = UIGraphicsGetImageFromCurrentImageContext()
         
         UIGraphicsEndImageContext()
         
