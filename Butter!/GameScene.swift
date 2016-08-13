@@ -316,7 +316,7 @@ class GameScene: SKScene{
                     flipPancakes(currentPancake)
                 
 //                    //Depending on the value a Fork or Knife will appear
-//                    getrandomNumber()
+//                 getrandomNumber()
                
                 
                 if endGame == false && interference == false{
@@ -354,19 +354,22 @@ class GameScene: SKScene{
                     }
                     
                     
-                    Pancake.zPosition = currentZPosition + 5
+                    Pancake.zPosition = currentZPosition + 1
                     
                     //Store Pancake Z position
                     currentZPosition = Pancake.zPosition
                     
                 }
                
+
                 //Checks to see if it is a new pancake
                 if currentPancake == previousPancake || currentPancake != previousPancake{
                     currentPancake.removeActionForKey("movingPancake")
                     
                 }
                 
+                interference = true
+
                 if endGame == false {
                     /* Set camera to follow pancake */
                     cameraTarget = previousPancake
@@ -386,11 +389,11 @@ class GameScene: SKScene{
                     pancakes.append(Pancake)
                 }
                 
+                
                 //Reset Since Touch
                 sinceTouch = 0
                 
             }
-         
         }
     
     }
@@ -427,26 +430,28 @@ class GameScene: SKScene{
             }
          
             if objectTouched == true {
-                interference = false
+                interference = true
             }
             
             if objectDone == true{
-                interference = false
+               interference = false
                 objectDone = false
             }
             
-//            if interference == false{
-//                //Generates a random value (10)
-//                let randomTime = Double(arc4random_uniform(9) + 1)
-//                print(randomTime)
-//                if spawnObject > randomTime && spawnObject <= randomTime + 1{
-//                    //Depending on the value a Fork or Knife will appear
-//                    getrandomNumber()
-//                    spawnObject = 0
-//
-//                }
-//                
-//            }
+            if interference == true{
+                //Generates a random value (10)
+                let randomTime = Double(arc4random_uniform(9) + 1)
+                
+                if spawnObject > randomTime && spawnObject <= randomTime + 1{
+                    //Depending on the value a Fork or Knife will appear
+                        self.getrandomNumber()
+                        spawnObject = 0
+
+                }
+                
+            }
+            
+            print(interference)
             
             //To make sure only one object appears at a time
             if currentObject == .None{
@@ -664,7 +669,7 @@ class GameScene: SKScene{
     
         //Move the pancake up by 250
         Pancake.runAction(SKAction.sequence([
-            SKAction.moveBy(CGVector(dx: 0, dy: 300), duration: 0.10)]))
+            SKAction.moveBy(CGVector(dx: 0, dy: 300), duration: 0.8)]))
         
         //Remove Pancake from parent
         Pancake.removeFromParent()
@@ -792,7 +797,7 @@ class GameScene: SKScene{
             if objectTouched == false {
                 
             //Actions
-            let moveUp = SKAction.moveBy(CGVector(dx: 0, dy:300), duration: 0.5)
+            let moveUp = SKAction.moveBy(CGVector(dx: 0, dy:300), duration: 0.8)
           
             //Picks up Fork and Pancake
             fork.runAction(moveUp)
@@ -820,16 +825,15 @@ class GameScene: SKScene{
             //Prevent a new pancake from appearing
             interference = true
             
-            //Stores Current Pancake
-            let currentPancake = pancakeTower[currCount]
-
+            //Stores the previous Pancake
+            let previousPancake = pancakeTower[prevCount]
             
             //Stores Values
-            let pancakeYposition =  currentPancake.position.y
-            let pancakeXposition =  currentPancake.position.x
+            let pancakeYposition =  previousPancake.position.y
+            let pancakeXposition =  previousPancake.position.x
             
             //Get the Pancake Z-position
-            let pancakeZposition =  currentPancake.zPosition
+            let pancakeZposition =  previousPancake.zPosition
             
             //Set Fork Z-Position higher than Pancake Z-Position
             let forkZposition = pancakeZposition + 2
@@ -849,7 +853,9 @@ class GameScene: SKScene{
             let findPancake = SKAction.moveToX(pancakeXposition + 18, duration: 1)
             
             //Drops the Fork down
-            let dropFork = SKAction.moveToY(pancakeYposition + 100, duration: 1)
+            let dropFork = SKAction.moveToY(pancakeYposition + 100 , duration: 1)
+            
+          
             
             //join action
             let sequence = SKAction.sequence([findPancake, dropFork])
@@ -897,10 +903,10 @@ class GameScene: SKScene{
               animatePancake(previousPancake)
             
                 //Sets the knife to move off screen
-                let moveKnife = SKAction.moveToX(-211, duration: 0.5)
+                let moveKnife = SKAction.moveToX(-211, duration: 1)
                 
                 knife.runAction(moveKnife)
-
+                
                 //Reset Knife X-Position
                 knife.position.x = -211
                 
@@ -915,15 +921,15 @@ class GameScene: SKScene{
             //Prevent a new pancake from appearing
             interference = true
             
-            //Stores the current Pancake
-            let currentPancake = pancakeTower[currCount]
+            //Stores the previous Pancake
+            let previousPancake = pancakeTower[prevCount]
           
             //Gets the previous Pancake
-            let pancakeYposition = currentPancake.position.y
-            let pancakeXposition = currentPancake.position.x
+            let pancakeYposition = previousPancake.position.y
+            let pancakeXposition = previousPancake.position.x
             
             //Get the Pancake Z-position
-            let pancakeZposition = currentPancake.zPosition
+            let pancakeZposition = previousPancake.zPosition
             
             //Set Knife Z-Position higher than Pancake Z-Position
             let knifeZposition = pancakeZposition + 2
@@ -932,14 +938,14 @@ class GameScene: SKScene{
             knife.zPosition = knifeZposition
             
             //Position Knife off Screen
-            knife.position = CGPoint(x: -211, y:pancakeYposition * 2)
+            knife.position = CGPoint(x: -211, y: pancakeYposition * 3)
             
             //Brings the Knife on Screen and drops it on Pancake
-            let findPancake = SKAction.moveToX(pancakeXposition - 170, duration: 1)
+            //- 370
+            let findPancake = SKAction.moveToX(pancakeXposition - 120, duration: 1)
             
-            let dropKnife = SKAction.moveToY(pancakeYposition - 70,
-                duration: 1)
-
+            let dropKnife = SKAction.moveToY(pancakeYposition - 28, duration: 1)
+            
             let sequence = SKAction.sequence([findPancake, dropKnife])
             knife.runAction(sequence)
             
@@ -957,13 +963,14 @@ class GameScene: SKScene{
     }
 
     func getrandomNumber(){
-        
+    
         //Set object touched to false
         objectTouched = false
         
         //Generates a random value
         let randomNumber = Int(arc4random_uniform(100) + 1)
     
+         print(randomNumber)
         //If the number is dividable by 5
         if randomNumber % 5 == 0 {
             interference = true

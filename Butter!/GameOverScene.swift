@@ -28,6 +28,9 @@ class GameOverScene: SKScene {
     //Homepage
     var home: MSButtonNode!
     
+    //Share
+    var share: MSButtonNode!
+    
     override func didMoveToView(view: SKView) {
         //Setup your scene
     
@@ -49,6 +52,9 @@ class GameOverScene: SKScene {
         
         //Reference for Home page
         home = childNodeWithName("home") as! MSButtonNode
+        
+        //Reference for Share button
+        share = childNodeWithName("share") as! MSButtonNode
         
         //Executes when button is pressed
         home.selectedHandler = {
@@ -88,6 +94,12 @@ class GameOverScene: SKScene {
             volumeOff = false
         }
         
+        //Set Share button
+        share.selectedHandler = {
+            self.shareScore(self.scene!)
+        }
+
+        
 
         //Reference for current coins
         // currentCoins = childNodeWithName("currentCoins") as! SKLabelNode
@@ -109,8 +121,37 @@ class GameOverScene: SKScene {
         
 
     }
-    override func update(currentTime: NSTimeInterval) {
+    func shareScore(scene: SKScene) {
+        let postText: String = "Check out my score! Can you beat it?"
+        let postImage: UIImage = getScreenshot(scene)
+        let activityItems = [postText, postImage]
+        let activityController = UIActivityViewController(
+            activityItems: activityItems,
+            applicationActivities: nil
+        )
         
-      
+        var controller: UIViewController = scene.view!.window!.rootViewController!
+        
+        controller.presentViewController(
+            activityController,
+            animated: true,
+            completion: nil
+        )
     }
+    
+    func getScreenshot(scene: SKScene) -> UIImage {
+        let snapshotView = scene.view!.snapshotViewAfterScreenUpdates(true)
+        let bounds = UIScreen.mainScreen().bounds
+        
+        UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0)
+        
+        snapshotView.drawViewHierarchyInRect(bounds, afterScreenUpdates: true)
+        
+        var screenshotImage : UIImage = UIGraphicsGetImageFromCurrentImageContext()
+        
+        UIGraphicsEndImageContext()
+        
+        return screenshotImage;
+    }
+
 }

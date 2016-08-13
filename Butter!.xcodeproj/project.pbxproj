@@ -44,7 +44,7 @@
 		2CE19BDC1D4BE27400B28368 /* Fork.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CE19BDB1D4BE27400B28368 /* Fork.sks */; };
 		2CE19BDE1D4BE28D00B28368 /* Knife.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CE19BDD1D4BE28D00B28368 /* Knife.sks */; };
 		2CF178BB1D5E810300E72595 /* Info.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2CF178BA1D5E810300E72595 /* Info.sks */; };
-		2CF178BD1D5E919C00E72595 /* info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF178BC1D5E919C00E72595 /* info.swift */; };
+		2CF178BD1D5E919C00E72595 /* Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CF178BC1D5E919C00E72595 /* Info.swift */; };
 		2CF5EEDF1D5E5F1C008EA0E9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2CF5EEDE1D5E5F1C008EA0E9 /* Assets.xcassets */; };
 		2CFB11601D5BFA0D002D829B /* objectContact.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2CFB115E1D5BFA0D002D829B /* objectContact.wav */; };
 		2CFB11611D5BFA0D002D829B /* fallingPancake.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2CFB115F1D5BFA0D002D829B /* fallingPancake.wav */; };
@@ -118,7 +118,7 @@
 		2CE19BDB1D4BE27400B28368 /* Fork.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = Fork.sks; path = "Butter!/Fork.sks"; sourceTree = "<group>"; };
 		2CE19BDD1D4BE28D00B28368 /* Knife.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Knife.sks; sourceTree = "<group>"; };
 		2CF178BA1D5E810300E72595 /* Info.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Info.sks; sourceTree = "<group>"; };
-		2CF178BC1D5E919C00E72595 /* info.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = info.swift; sourceTree = "<group>"; };
+		2CF178BC1D5E919C00E72595 /* Info.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Info.swift; sourceTree = "<group>"; };
 		2CF5EEDE1D5E5F1C008EA0E9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2CFB115E1D5BFA0D002D829B /* objectContact.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = objectContact.wav; sourceTree = "<group>"; };
 		2CFB115F1D5BFA0D002D829B /* fallingPancake.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = fallingPancake.wav; sourceTree = "<group>"; };
@@ -223,7 +223,7 @@
 				2CBDF3091D444A05004E3B3F /* MainMenu.sks */,
 				2CBDF30B1D444CEA004E3B3F /* MainMenu.swift */,
 				2CF178BA1D5E810300E72595 /* Info.sks */,
-				2CF178BC1D5E919C00E72595 /* info.swift */,
+				2CF178BC1D5E919C00E72595 /* Info.swift */,
 				2C299DB41D367E47000D3409 /* GameScene.sks */,
 				2C299D821D367A20000D3409 /* GameScene.swift */,
 				2C54F07A1D4569A700A645AB /* GameOverScene.swift */,
@@ -591,7 +591,7 @@
 				2C2154691D38240E00FEC7D8 /* CGVector+Extensions.swift in Sources */,
 				2C2154661D38240E00FEC7D8 /* MSReferenceNode.swift in Sources */,
 				2C21546F1D38240E00FEC7D8 /* SKTAudio.swift in Sources */,
-				2CF178BD1D5E919C00E72595 /* info.swift in Sources */,
+				2CF178BD1D5E919C00E72595 /* Info.swift in Sources */,
 				2C2154671D38240E00FEC7D8 /* CGFloat+Extensions.swift in Sources */,
 				2C253E051D4546C8004ECE1B /* MSButtonNode.swift in Sources */,
 			);

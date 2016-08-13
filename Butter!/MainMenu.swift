@@ -6,13 +6,6 @@
 //  Copyright © 2016 Kadiatou Diallo. All rights reserved.
 //
 
-//
-//  Title Page.swift
-//  Butter!
-//
-//  Created by Kadiatou Diallo on 7/22/16.
-//  Copyright © 2016 Kadiatou Diallo. All rights reserved.
-//
 
 import SpriteKit
 import AVFoundation
@@ -96,7 +89,20 @@ class MainMenu: SKScene {
         
         //Set Info button
         info.selectedHandler = {
-            let transition =
+            let sceneAction = SKAction.runBlock({
+                
+                //Load info Scene
+                let infoScene = InfoPage(fileNamed: "Info") as InfoPage!
+                
+                //Ensure correct aspect mode
+                infoScene.scaleMode = .AspectFill
+               
+                let transition = SKTransition.doorsOpenVerticalWithDuration(1.0)
+                infoScene.scaleMode = SKSceneScaleMode.AspectFill
+                self.scene!.view?.presentScene(infoScene, transition: transition)
+        })
+              self.info.runAction(sceneAction)
+            
         }
         
         
