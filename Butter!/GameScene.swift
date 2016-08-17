@@ -45,13 +45,7 @@ struct Profile {
 
 class GameScene: SKScene{
     //Game State
-    var gameState: GameState = .Loading{
-        didSet{
-            if gameState == .Active{
-                firstPancake()
-            }
-        }
-    }
+    var gameState: GameState = .Active
     
     //Tracks the object on screen
     var currentObject: Object = .None
@@ -176,11 +170,11 @@ class GameScene: SKScene{
             
             highscoreVal = highscoreDefault.valueForKey("Highscore") as! NSInteger
         }
-
+ /*
         /* Facebook authentication check */
         if (FBSDKAccessToken.currentAccessToken() == nil) {
             
-            /* No access token, begin FB authentication process */
+          /* No access token, begin FB authentication process */
             FBSDKLoginManager().logInWithReadPermissions(["public_profile","email","user_friends"], fromViewController:self.view?.window?.rootViewController, handler: {
                 (facebookResult, facebookError) -> Void in
                 
@@ -241,6 +235,11 @@ class GameScene: SKScene{
         }) { (error) in
             print(error.localizedDescription)
         }
+ 
+    */
+            if gameState == .Active{
+                firstPancake()
+            }
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
